@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="main_style.css">
+  <title>Hakjin Lee | My Page</title>
+
+</head>
+
+<body>
+    <header class="header">
+        <span id="headertitle1">Hakjin Lee</span>
+        <span id="headertitle2">Astrophysicist with AI</span>
+    </header>
+
+    <aside class="sidebar">
+        <ul>
+            <li><a href="#" onclick="loadPage('introduction.html')">About Me</a></li>
+            <li><a href="#" onclick="loadPage('project.html')">Projects</a></li>
+            <li><a href="#" onclick="loadPage('publication.html')">Publications</a></li>
+            <li><a href="#" onclick="loadPage('Blog.html')">Blog</a></li>
+        </ul>
+    </aside>
+    
+    <!-- 동적으로 내용이 들어갈 영역 -->
+    <div class="contentBackground">
+        <main id="content"></main>
+    </div>
+
+    <script>
+        function loadPage(page) {
+            fetch(`pages/${page}`)
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('content').innerHTML = html;
+                })
+                .catch(err => console.error(err));
+        }
+
+        window.onload = () => {
+            loadPage("introduction.html");
+        };
+    </script>
+</body>
+</html>
