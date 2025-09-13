@@ -46,7 +46,7 @@
 
 /* for main content */
 .content {
-    width: 95% auto;           /* 가로 */
+    width: 100% auto;           /* 가로 */
     height: 5000px;          /* 세로 */
     margin: 0;          /* 바깥 여백 */
     background-color : rgba(0, 0, 0, 0.02);        /* 글자 색 */
