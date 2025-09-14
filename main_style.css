@@ -18,7 +18,7 @@
     height: var(--header-height);            /* 세로 */
     margin: 0 auto;           /* 바깥 여백 */
     padding: 10px;            /* 안쪽 여백 */
-    background-color : rgb(60, 60, 60);        /* 배경 색 */
+    background-color : rgb(50, 50, 50);        /* 배경 색 */
     box-sizing: border-box;   /* 패딩과 보더를 포함한 크기 계산 */
     position: fixed;    /* 스크롤을 따라오도록 지정 */
 }
@@ -121,3 +121,4 @@ body {
     transition: .3s;
     border-radius: 20px;
 }
+
