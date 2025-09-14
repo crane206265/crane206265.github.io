@@ -1,6 +1,6 @@
 <section id="introduction">
     <h2 id="title1">Hakjin Lee</h2>
-    <hr width="100%" size="2px" color="black" class="linemaxwidth">
+    <hr color="black" class="topline linemaxwidth">
     
     <div class="block1">
         <img src="./images/IDPhoto.jpg?v=1" alt="IDPhoto" class="icon">
@@ -46,7 +46,7 @@
     <div class="block1">
         <div class="info1">
             <div class="row">
-                <span class="label">Awards and Honors:</span>
+                <span class="label">Awards:</span>
                 <span class="value1">Korea Presidential Science Scholarship</span>
                 <span class="value2">2024-Present</span>
             </div>
@@ -97,15 +97,23 @@
         --row-gap: 110px;
         --lineminwidth: 600px;
         --valuepadding: none;
+        --linewidth: 70vw;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 600px) and (min-width: 400px) {
         :root {
             --icon-width: 50vw;
             --icon-height: auto;
             --row-gap: 20vw;
             --lineminwidth: none;
             --valuepadding: 20px;
+            --linewidth: 70vw;
+        }
+    }
+
+    @media (max-width: 400px) {
+        :root {
+            --linewidth: 300px;
         }
     }
 
@@ -220,9 +228,17 @@
         border: none;
     }
 
+    .topline {
+        width: 70vw;
+        min-width: var(--lineminwidth);
+        height: 2px;
+        margin-left: 0;
+        border: none;
+    }
+
     @media (max-width: 600px) {
         .linemaxwidth {
-            width: 400px;
+            width: var(--linewidth);
         }
     }
 
