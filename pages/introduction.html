@@ -1,6 +1,6 @@
 <section id="introduction">
     <h2 id="title1">Hakjin Lee</h2>
-    <hr width="100%" size="2px" color="black">
+    <hr width="100%" size="2px" color="black" class="linemaxwidth">
     
     <div class="block1">
         <img src="./images/IDPhoto.jpg?v=1" alt="IDPhoto" class="icon">
@@ -22,7 +22,7 @@
         </p>
     </div>
 
-    <hr class="leftline" color="gray">
+    <hr class="leftline linemaxwidth" color="gray">
 
     <div class="block1">
         <div class="info1">
@@ -68,21 +68,21 @@
         </div>
     </div>
 
-    <hr class="leftline" color="gray">
+    <hr class="linemaxwidth leftline" color="gray">
 
     <div class="block1">
         <div class="info1">
             <div class="row">
                 <span class="label">Location:</span>
-                <span class="value">Daejeon, South Korea</span>
+                <span class="value1">Daejeon, South Korea</span>
             </div>
             <div class="row">
                 <span class="label">GitHub:</span>
-                <a href="https://github.com/crane206265" class="value">https://github.com/crane206265</a>
+                <a href="https://github.com/crane206265" class="value1">https://github.com/crane206265</a>
             </div>
             <div class="row">
                 <span class="label">Email:</span>
-                <span class="value">crane206265@kaist.ac.kr</span>
+                <span class="value1">crane206265@kaist.ac.kr</span>
             </div>
         </div>
     </div>
@@ -95,6 +95,8 @@
         --icon-width: auto;
         --icon-height: 30vh;
         --row-gap: 110px;
+        --lineminwidth: 600px;
+        --valuepadding: none;
     }
 
     @media (max-width: 600px) {
@@ -102,6 +104,8 @@
             --icon-width: 50vw;
             --icon-height: auto;
             --row-gap: 20vw;
+            --lineminwidth: none;
+            --valuepadding: 20px;
         }
     }
 
@@ -166,6 +170,13 @@
         margin-bottom: 5px;
     }
 
+    /* 화면이 좁아지면 한 열로 */
+    @media (max-width: 600px) {
+        .info1 .row {
+            grid-template-columns: 1fr; /* 한 줄 → 세로 배치 */
+        }
+    }
+
     .info1 .row .label {
         font-weight: 600;
         width: var(--row-gap);
@@ -179,6 +190,8 @@
         word-break: break-word;     /* 표준 */
         min-width: 300px;               /* flex 안에서 줄바꿈 허용 */
         max-width: 600px;              /* 너무 길어지는 것 방지 */
+        padding-left: 20px;
+        padding-right: var(--valuepadding);
     }
 
     .info1 .row .value2 {
@@ -193,16 +206,23 @@
 
     .info1 .row .value {
         grid-column: 2 / -1; /* 2열부터 끝 열까지 */
+        max-width: 300px;
     }
 
     .leftline {
         width: 70vw;
-        min-width: 600px;
+        min-width: var(--lineminwidth);
         height: 1px;
         margin-left: 0;
         margin-top: 20px;
         margin-bottom: 20px;
         border: none;
+    }
+
+    @media (max-width: 600px) {
+        .linemaxwidth {
+            width: 400px;
+        }
     }
 
 </style>
