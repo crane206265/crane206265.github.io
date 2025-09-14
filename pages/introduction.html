@@ -1,6 +1,6 @@
 <section id="introduction">
     <h2 id="title1">Hakjin Lee</h2>
-    <hr width="100%" size="1" color="black">
+    <hr width="100%" size="2px" color="black">
     
     <div class="block1">
         <img src="./images/IDPhoto.jpg?v=1" alt="IDPhoto" class="icon">
@@ -10,16 +10,30 @@
             <br><br>
             I am currently working in ObsCAL(Observational Cosmology and Astrophysics Lab) in KAIST
             as undergraduate individual study, since summer 2025.
-            <br><br>
         </p>
     </div>
-
+    
     <div class="block1">
         <p class="p1">
             My current research topic is asteroid reconstruction by lightcurve inversion using reinforcement learning.
             Also, I'm participating to developement of automatic observation scheduling program, STOOP(Shortest Time Observation Order Program),
-            contributing to the algorithmic part and moonlit analysing part.
+            contributing to the algorithmic part and moonlit analysing part. Yes
         </p>
+    </div>
+
+    <hr class="leftline" color="gray">
+
+    <div class="block1">
+        <div class="info1">
+            <div class="row">
+                <span class="label">GitHub:</span>
+                <a href="https://github.com/crane206265" class="value">https://github.com/crane206265</a>
+            </div>
+            <div class="row">
+                <span class="label">Email:</span>
+                <span class="value">crane206265@kaist.ac.kr</span>
+            </div>
+        </div>
     </div>
 
 </section>
@@ -29,18 +43,21 @@
     :root {
         --icon-width: auto;
         --icon-height: 30vh;
+        --row-gap: 140px;
     }
 
     @media (max-width: 600px) {
         :root {
             --icon-width: 50vw;
             --icon-height: auto;
+            --row-gap: 20vw;
         }
     }
 
     /* intro 섹션 스타일 */
     #introduction {
-        width: 80vw;
+        width: 85vw;
+        padding-right: 0px;
     }
 
     #title1 {
@@ -54,7 +71,7 @@
     .block1 {
         display: block;
         clear: both;
-        padding: 5px 0px 10px 10px;
+        padding: 5px 0px 5px 10px;
         display: flex;
     }
 
@@ -81,4 +98,44 @@
         margin-bottom: 10px;
         border-radius: 15px;
     }
+
+    .info1 {
+        font-family: "Trebuchet MS", Dotum, Arial;
+        font-size: 1.1rem;
+        width: 100%;
+        padding: 5px 10px 5px 10px;
+        margin: 0;
+    }
+
+    .info1 .row{
+        display: grid;
+        grid-template-columns: var(--row-gap) 1fr;   /* 라벨 140px, 나머지 자동 */
+        column-gap: 16px;
+        align-items: start;
+        margin-bottom: 5px;
+    }
+
+    .info1 .row .label {
+        font-weight: 600;
+        width: var(--row-gap);
+    }
+
+    .info1 .row .value {
+        flex: 1 1 auto;
+        font-weight: normal;
+        white-space: normal;        /* 공백과 줄바꿈 허용 */
+        overflow-wrap: break-word;  /* 긴 단어 자동 줄바꿈 */
+        word-break: break-word;     /* 표준 */
+        min-width: 0;               /* flex 안에서 줄바꿈 허용 */
+    }
+
+    .leftline {
+        width: 70%;
+        height: 1px;
+        margin-left: 0;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        border: none;
+    }
+
 </style>
