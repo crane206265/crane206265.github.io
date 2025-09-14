@@ -25,9 +25,22 @@
 </section>
 
 <style>
+    /* 반응형 웹 디자인을 위한 미디어 쿼리 */
+    :root {
+        --icon-width: auto;
+        --icon-height: 30vh;
+    }
+
+    @media (max-width: 600px) {
+        :root {
+            --icon-width: 50vw;
+            --icon-height: auto;
+        }
+    }
+
     /* intro 섹션 스타일 */
     #introduction {
-        width: 75vw;
+        width: 80vw;
     }
 
     #title1 {
@@ -45,6 +58,13 @@
         display: flex;
     }
 
+    /* 화면이 좁아지면 세로로 */
+    @media (max-width: 600px) {
+        .block1 {
+            flex-direction: column;
+        }
+    }
+
     .p1 {
         font-size: 1.1rem;
         font-family: "Trebuchet MS", Dotum, Arial;
@@ -53,9 +73,8 @@
     }
 
     .icon {
-        width: auto;
-        /*height: 250px;*/
-        height: 30vh;
+        width: var(--icon-width);
+        height: var(--icon-height);
         float: left;
         margin-top: 10px;
         margin-right: 20px;
