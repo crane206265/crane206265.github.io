@@ -1,8 +1,8 @@
 
 /* 변수를 통해 통제 */
 :root {
-    --header-height: 11.5vh;
-    --side-bar-width: 270px;
+    --header-height: 10.5vh; /*11.5vh*/
+    --side-bar-width: 180px; /*270px*/
     --side-bar-height: 90vh;
 }
 
@@ -25,7 +25,7 @@
 
 #headertitle1 {
     font-family: "Trebuchet MS", Dotum, Arial;
-    font-size: 2.3rem;
+    font-size: 2rem; /*2.3rem*/
     font-weight: bold;
     margin: 10px 0 10px 20px; /* 위, 오른쪽, 아래, 왼쪽 순서 */
     display: inline-block;  /* h1이 블록 요소이므로 인라인 블록으로 변경 */
@@ -35,7 +35,7 @@
 
 #headertitle2 {
     font-family: "Trebuchet MS", Dotum, Arial;
-    font-size: 1.3rem;
+    font-size: 1.1rem; /*1.3rem*/
     font-weight: bold;
     margin: 10px 0 10px 20px; /* 위, 오른쪽, 아래, 왼쪽 순서 */
     display: inline-block;  /* h1이 블록 요소이므로 인라인 블록으로 변경 */
@@ -96,7 +96,7 @@ body {
 .sidebar ul li a {
     display: block;
     color: rgb(203, 203, 203);
-    font-size: 1.3rem;
+    font-size: 1.0rem; /*1.2rem*/
     font-weight: bold;
     padding-top: 20px;
     padding-bottom: 20px;
