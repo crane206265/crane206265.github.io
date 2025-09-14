@@ -32,7 +32,7 @@
 
     <script>
         function loadPage(page) {
-            fetch(`pages/${page}`)
+            fetch(`./pages/${page}`)
                 .then(r => r.text())
                 .then(html => {
                     document.getElementById('content').innerHTML = html;
