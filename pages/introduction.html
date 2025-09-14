@@ -4,9 +4,10 @@
     
     <div class="block1">
         <img src="./images/IDPhoto.jpg?v=1" alt="IDPhoto" class="icon">
-        <p class="p1" font-size="19px">
-            I am an undergraduate student at Department of Physics, KAIST, double majoring in School of Computing.
-            My research interests include astrophysics, deep learning, and their intersection.
+        <p class="p1" font-size="1.3rem">
+            I am an undergraduate student at <span style="font-weight: 600;">Department of Physics, KAIST</span>,
+            double majoring in <span style="font-weight: 600;">School of Computing</span>.
+            My research interests include <span style="font-weight: 600;">astronomy, astrophysics, deep learning</span>, and their intersection.
             <br><br>
             I am currently working in ObsCAL(Observational Cosmology and Astrophysics Lab) in KAIST
             as undergraduate individual study, since summer 2025.
@@ -17,7 +18,7 @@
         <p class="p1">
             My current research topic is asteroid reconstruction by lightcurve inversion using reinforcement learning.
             Also, I'm participating to developement of automatic observation scheduling program, STOOP(Shortest Time Observation Order Program),
-            contributing to the algorithmic part and moonlit analysing part. Yes
+            contributing to the algorithmic part and moonlit analysing part.
         </p>
     </div>
 
@@ -25,6 +26,56 @@
 
     <div class="block1">
         <div class="info1">
+            <div class="row">
+                <span class="label">Education:</span>
+                <span class="value1">Dept. of Physics, KAIST(Korea Advanced Institute of Science and Technology)</span>
+                <span class="value2">2024-Present</span>
+            </div>
+            <div class="row">
+                <span class="label"></span>
+                <span class="value1">School of Computing, KAIST(Korea Advanced Institute of Science and Technology)</span>
+                <span class="value2">2024-Present</span>
+            </div>
+            <div class="row">
+                <span class="label"></span>
+                <span class="value1">Jeonbuk Science High School</span>
+                <span class="value2">2022-2023</span>
+            </div>
+        </div>
+    </div>
+    <div class="block1">
+        <div class="info1">
+            <div class="row">
+                <span class="label">Awards and Honors:</span>
+                <span class="value1">Scholarship - Korea Presidential Science Scholarship</span>
+                <span class="value2">2024-Present</span>
+            </div>
+            <div class="row">
+                <span class="label"></span>
+                <span class="value1">Scholarship - KAIST Presidential Fellowship</span>
+                <span class="value2">2024-Present</span>
+            </div>
+            <div class="row">
+                <span class="label"></span>
+                <span class="value1">Gold Medal - International Olympiad on Astronomy and Astrophysics (IOAA)</span>
+                <span class="value2">2023</span>
+            </div>
+            <div class="row">
+                <span class="label"></span>
+                <span class="value1">II-nd Prize - International Astronomy Olympiad (IAO)</span>
+                <span class="value2">2022</span>
+            </div>
+        </div>
+    </div>
+
+    <hr class="leftline" color="gray">
+
+    <div class="block1">
+        <div class="info1">
+            <div class="row">
+                <span class="label">Location:</span>
+                <span class="value">Daejeon, South Korea</span>
+            </div>
             <div class="row">
                 <span class="label">GitHub:</span>
                 <a href="https://github.com/crane206265" class="value">https://github.com/crane206265</a>
@@ -43,7 +94,7 @@
     :root {
         --icon-width: auto;
         --icon-height: 30vh;
-        --row-gap: 140px;
+        --row-gap: 110px;
     }
 
     @media (max-width: 600px) {
@@ -109,7 +160,7 @@
 
     .info1 .row{
         display: grid;
-        grid-template-columns: var(--row-gap) 1fr;   /* 라벨 140px, 나머지 자동 */
+        grid-template-columns: var(--row-gap) 1fr 2fr;   /* 라벨 140px, 나머지 자동 */
         column-gap: 16px;
         align-items: start;
         margin-bottom: 5px;
@@ -120,17 +171,33 @@
         width: var(--row-gap);
     }
 
-    .info1 .row .value {
+    .info1 .row .value1 {
+        flex: 1 1 auto;
+        font-weight: normal;
+        white-space: normal;        /* 공백과 줄바꿈 허용 */
+        overflow-wrap: break-word;  /* 긴 단어 자동 줄바꿈 */
+        word-break: break-word;     /* 표준 */
+        min-width: 300px;               /* flex 안에서 줄바꿈 허용 */
+        max-width: 600px;              /* 너무 길어지는 것 방지 */
+    }
+
+    .info1 .row .value2 {
         flex: 1 1 auto;
         font-weight: normal;
         white-space: normal;        /* 공백과 줄바꿈 허용 */
         overflow-wrap: break-word;  /* 긴 단어 자동 줄바꿈 */
         word-break: break-word;     /* 표준 */
         min-width: 0;               /* flex 안에서 줄바꿈 허용 */
+        padding-left: 20px;
+    }
+
+    .info1 .row .value {
+        grid-column: 2 / -1; /* 2열부터 끝 열까지 */
     }
 
     .leftline {
-        width: 70%;
+        width: 70vw;
+        min-width: 600px;
         height: 1px;
         margin-left: 0;
         margin-top: 20px;

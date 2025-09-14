@@ -21,6 +21,7 @@
     background-color : rgb(50, 50, 50);        /* 배경 색 */
     box-sizing: border-box;   /* 패딩과 보더를 포함한 크기 계산 */
     position: fixed;    /* 스크롤을 따라오도록 지정 */
+    z-index: 100;   /* 다른 요소들보다 위에 표시 */
 }
 
 #headertitle1 {
@@ -35,7 +36,7 @@
 
 #headertitle2 {
     font-family: "Trebuchet MS", Dotum, Arial;
-    font-size: 1.1rem; /*1.3rem*/
+    font-size: 1.15rem; /*1.3rem*/
     font-weight: bold;
     margin: 10px 0 10px 20px; /* 위, 오른쪽, 아래, 왼쪽 순서 */
     display: inline-block;  /* h1이 블록 요소이므로 인라인 블록으로 변경 */
@@ -46,7 +47,7 @@
 
 /* for main content */
 .content {
-    width: 100% auto;           /* 가로 */
+    width: 100%;           /* 가로 */
     height: 5000px;          /* 세로 */
     margin: 0;          /* 바깥 여백 */
     background-color : rgba(0, 0, 0, 0.02);        /* 글자 색 */
@@ -108,11 +109,20 @@ body {
     border-radius: 20px;
     transform: translate(calc(var(--side-bar-width) * -0.8), 0);  /* X축 이동, Y축 고정 */
     transition: .5s;
-}   
+}
+
+.contentBackground * {
+    transition: .5s;
+}
 
 /* 마우스 인식 시 원래의 위치로 이동 */
 .sidebar:hover {
-    transform: translate(-20px, 0);   /* 둥근 모서리의 너비만큼 X축 이동, Y축 고정 */
+    transform: translate(-20px, 0);
+}
+
+
+.sidebar:hover ~ .contentBackground * {
+    transform: translate(40px, 0);
 }
 
 .sidebar ul li a:hover {
