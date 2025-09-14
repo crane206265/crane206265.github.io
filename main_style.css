@@ -54,8 +54,8 @@
 
 .contentBackground {
     background-color : rgba(0, 0, 0, 0.02);        /* 글자 색 */
-    padding-top: calc(var(--header-height) + 4vh);
-    padding-left: calc(var(--side-bar-width) * 0.3 + 2vh);
+    padding-top: calc(var(--header-height) + 3vh);
+    padding-left: calc(var(--side-bar-width) * 0.3 + 1vh);
     padding-right: 20px;
     box-sizing: border-box;   /* 패딩과 보더를 포함한 크기 계산 */
     height: 5000px;         /* 세로 */
@@ -121,5 +121,3 @@ body {
     transition: .3s;
     border-radius: 20px;
 }
-
-
