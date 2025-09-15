@@ -3,7 +3,7 @@
     <hr color="black" class="topline linemaxwidth">
     
     <div class="block1">
-        <img src="./images/IDPhoto.jpg?v=1" alt="IDPhoto" class="icon">
+        <img src="./images/IDPhoto.jpg?v=1" alt="IDPhoto" id="IDPhoto">
         <p class="p1" font-size="1.3rem">
             I am an undergraduate student at <span style="font-weight: 600;">Department of Physics, KAIST</span>,
             double majoring in <span style="font-weight: 600;">School of Computing</span>.
@@ -74,15 +74,15 @@
     <div class="block1">
         <div class="info1">
             <div class="row">
-                <span class="label">Location:</span>
+                <span class="label"><img src="./images/LocationIcon.jpg?v=1" alt="" class="icon">Location:</span>
                 <span class="value1">Daejeon, South Korea</span>
             </div>
             <div class="row">
-                <span class="label">GitHub:</span>
+                <span class="label"><img src="./images/GitHubLogo.png?v=1" alt="" class="icon">GitHub:</span>
                 <a href="https://github.com/crane206265" class="value1">https://github.com/crane206265</a>
             </div>
             <div class="row">
-                <span class="label">Email:</span>
+                <span class="label"><img src="./images/EmailIcon.png?v=1" alt="" class="icon">Email:</span>
                 <span class="value1">crane206265@kaist.ac.kr</span>
             </div>
         </div>
@@ -162,7 +162,7 @@
         width: 80%;
     }
 
-    .icon {
+    #IDPhoto {
         width: var(--icon-width);
         height: var(--icon-height);
         float: left;
@@ -170,6 +170,12 @@
         margin-right: 20px;
         margin-bottom: 10px;
         border-radius: 15px;
+    }
+
+    .icon {
+        vertical-align: middle;   /* 글자 줄과 세로 위치 맞추기 */
+        margin: 2px 3px 5px 3px;        /* 글자와 간격 */
+        width: 20px;              /* 크기 조절 */
     }
 
     .info1 {
