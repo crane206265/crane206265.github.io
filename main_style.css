@@ -2,7 +2,7 @@
 /* 변수를 통해 통제 */
 :root {
     --header-height: 10.5vh; /*11.5vh*/
-    --side-bar-width: 190px; /*270px*/
+    --side-bar-width: 200px; /*270px*/
     --side-bar-height: 90vh;
 }
 
