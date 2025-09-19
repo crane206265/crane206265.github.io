@@ -1,22 +1,152 @@
-<section id="projects">
-    <h2 id="title1">Projects</h2>
-    <p id="p">This page is not implemented yet.</p>
+<section id="project">
+    <h2 class="title1">Current Projects</h2>
+    <hr color="black" class="topline linemaxwidth">
+    <div class="block1">
+        <p class="p1" font-size="1.3rem">
+            These are projects that I am currently working on. If you have any ideas or want to join, please feel free to contact me.
+        </p>
+    </div>
+
+    <br>
+    <h2 class="title2">Asteroid RL</h2>
+    <hr class="leftline linemaxwidth" color="gray">
+    <div class="block2">
+        <p class="p2" font-size="1.3rem">
+            asf
+        </p>
+    </div>
+
+    <br>
+    <h2 class="title2">STOOP(Shortest Time Observation Order Program)</h2>
+    <hr class="leftline linemaxwidth" color="gray">
+    <div class="block2">
+        <p class="p2" font-size="1.3rem">
+            asf
+        </p>
+    </div>
+
+
+    <br><br>
+    <h2 class="title1">Planned Projects</h2>
+    <hr color="black" class="topline linemaxwidth">
+    <div class="block1">
+        <p class="p1" font-size="1.3rem">
+            Planned Projects will be updated soon. If you have any ideas about planning these projects, please feel free to contact me.
+        </p>
+    </div>
+
+
+    <br><br>
+    <h2 class="title1">Past Projects</h2>
+    <hr color="black" class="topline linemaxwidth">
+    <div class="block1">
+        <p class="p1" font-size="1.3rem">
+            Past Projects will be updated soon. If you have any ideas to improve these projects, please feel free to contact me.
+        </p>
+    </div>
 </section>
 
 <style>
-    /* intro 섹션 스타일 */
-    #title1 {
-        font-size: 25px;
+    :root {
+        --icon-width: auto;
+        --icon-height: 30vh;
+        --row-gap: 110px;
+        --lineminwidth: 600px;
+        --valuepadding: none;
+        --linewidth: 70vw;
+    }
+
+    @media (max-width: 600px) and (min-width: 400px) {
+        :root {
+            --icon-width: 50vw;
+            --icon-height: auto;
+            --row-gap: 20vw;
+            --lineminwidth: none;
+            --valuepadding: 20px;
+            --linewidth: 70vw;
+        }
+    }
+
+    @media (max-width: 400px) {
+        :root {
+            --linewidth: 300px;
+        }
+    }
+
+    .title1 {
+        font-size: 1.9rem;
         font-weight: bold;
-        font-family: "Arial";
-        padding: 5px 10px 5px 10px;
+        font-family: "Trebuchet MS", Dotum, Arial;
+        padding: 5px 10px 10px 10px;
         margin: 0;
     }
 
-    #p {
-        font-size: 16px;
-        font-family: "Arial";
-        padding: 5px 10px 5px 10px;
+    .title2 {
+        font-size: 1.4rem;
+        font-weight: bold;
+        font-family: "Trebuchet MS", Dotum, Arial;
+        padding: 0px 10px 0px 10px;
         margin: 0;
+    }
+
+    .block1 {
+        display: block;
+        clear: both;
+        padding: 5px 0px 5px 10px;
+        display: flex;
+    }
+
+    .block2 {
+        display: block;
+        clear: both;
+        padding: 0px 0px 5px 10px;
+        display: flex;
+    }
+
+    /* 화면이 좁아지면 세로로 */
+    @media (max-width: 600px) {
+        .block1 {
+            flex-direction: column;
+        }
+    }
+
+    .p1 {
+        font-size: 1.1rem;
+        font-family: "Trebuchet MS", Dotum, Arial;
+        padding: 10px 10px 5px 10px;
+        margin: 0;
+        width: 80%;
+    }
+
+    .p2 {
+        font-size: 1.1rem;
+        font-family: "Trebuchet MS", Dotum, Arial;
+        padding: 0px 10px 5px 0px;
+        margin: 0;
+        width: 80%;
+    }
+
+    .topline {
+        width: 85vw;
+        min-width: var(--lineminwidth);
+        height: 2px;
+        margin-left: 0;
+        border: none;
+    }
+
+    .leftline {
+        width: 70vw;
+        min-width: var(--lineminwidth);
+        height: 1px;
+        margin-left: 0;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        border: none;
+    }
+
+    @media (max-width: 600px) {
+        .linemaxwidth {
+            width: var(--linewidth);
+        }
     }
 </style>
