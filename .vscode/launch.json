@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+
+    {
+      "type": "chrome",               // 최신 디버거 타입
+      "request": "launch",
+      "name": "Open with Chrome (localhost)",
+      "url": "http://localhost:5500/index.html",  // 로컬 서버 주소
+      "webRoot": "${workspaceFolder}"     // 워크스페이스 루트 기준
+    }
+  ]
+}
