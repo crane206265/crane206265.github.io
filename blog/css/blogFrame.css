@@ -1,0 +1,147 @@
+
+/* 변수를 통해 통제 */
+:root {
+    --header-height: 11.5vh; /*11.5vh*/
+    --side-bar-width: 200px; /*270px*/
+    --side-bar-height: 90vh;
+}
+
+.orbit-regular {
+  font-family: "Orbit", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+#contact {
+    font-family: "Trebuchet MS", Dotum, Arial;
+    background: #fffbe6;
+}
+
+/* for header */
+.header {
+    width: 100%;              /* 가로 */
+    height: var(--header-height);            /* 세로 */
+    margin: 0 auto;           /* 바깥 여백 */
+    padding: 10px;            /* 안쪽 여백 */
+    background-color : rgb(32, 32, 32);        /* 배경 색 */
+    box-sizing: border-box;   /* 패딩과 보더를 포함한 크기 계산 */
+    position: fixed;    /* 스크롤을 따라오도록 지정 */
+    z-index: 100;   /* 다른 요소들보다 위에 표시 */
+}
+
+#headertitle1 {
+    font-family: "Orbit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 2rem; /*2.3rem*/
+
+    margin: 10px 0 10px 20px; /* 위, 오른쪽, 아래, 왼쪽 순서 */
+    display: inline-block;  /* h1이 블록 요소이므로 인라인 블록으로 변경 */
+    color : rgb(250, 250, 250);
+    padding: 0;
+}
+
+#headertitle2 {
+    font-family: "Orbit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 1.15rem; /*1.3rem*/
+
+    margin: 10px 0 10px 20px; /* 위, 오른쪽, 아래, 왼쪽 순서 */
+    display: inline-block;  /* h1이 블록 요소이므로 인라인 블록으로 변경 */
+    color : rgb(210, 210, 210);
+    padding: 0;
+}
+
+
+/* for main content */
+.content {
+    width: 100%;           /* 가로 */
+    height: 5000px;          /* 세로 */
+    margin: 0;          /* 바깥 여백 */
+    background-color : rgba(0, 0, 0, 0.02);        /* 글자 색 */
+}
+
+.contentBackground {
+    background-color : rgba(0, 0, 0, 0.2);        /* 글자 색 */
+    padding-top: calc(var(--header-height));
+    /*padding-left: calc(var(--side-bar-width) * 0.3 + 1vh);
+    padding-left: 40px;
+    padding-right: 20px;*/
+    box-sizing: border-box;   /* 패딩과 보더를 포함한 크기 계산 */
+    height: 5000px;         /* 세로 */
+}
+
+
+
+/* 노멀라이즈 시작 */
+body, ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none;   	    /* 해당 태그의 list-style을 none으로 하는 것으로 ●을 제거한다 */
+}
+
+a {
+    color: inherit;   	    /* 부모 엘리먼트의 값을 물려받는다 */
+    text-decoration: none;    /* 해당 태그의 text-decoration 속성을 none 값으로 하는 것으로 밑줄을 제거한다 */
+}
+/* 노멀라이즈 끝 */
+
+/* 사이트의 높이를 5000px로 만들어 스크롤 생성 */
+body {
+    height: 5000px;
+    background-color: #ffffff;
+}
+
+.sidebar {
+    position: fixed;    /* 스크롤을 따라오도록 지정 */
+    background-color: rgb(80, 80, 80);
+    width: var(--side-bar-width);
+    min-height: var(--side-bar-height);   /* 사이드바의 높이를 전체 화면 높이의 90%로 지정 */
+    /*margin-top: calc((100vh - var(--side-bar-height)) / 2);  /* 사이드바를 화면의 중앙에 위치시키기 위해 위쪽 여백을 계산 */
+    margin-top: calc(var(--header-height) + 2vh);
+    margin-bottom: calc((100vh - var(--side-bar-height)) / 2);
+}
+
+/* 모든 메뉴의 a에 속성값 부여 */
+.sidebar ul li a {
+    display: block;
+    color: rgb(203, 203, 203);
+    font-size: 1.1rem; /*1.2rem*/
+    font-weight: bold;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 50px;
+}
+
+/* 사이드바 너비의 80%만큼 왼쪽으로 이동 */
+.sidebar {
+    border-radius: 20px;
+    transform: translate(calc(var(--side-bar-width) * -0.8), 0);  /* X축 이동, Y축 고정 */
+    transition: .5s;
+}
+
+/*
+.contentBackground * {
+    transition: .5s;
+}*/
+
+/* 마우스 인식 시 원래의 위치로 이동 */
+/*
+.sidebar:hover {
+    transform: translate(-20px, 0);
+}
+
+
+.sidebar:hover ~ .contentBackground * {
+    transform: translate(40px, 0);
+}
+
+.sidebar ul li a:hover {
+    background-color: rgb(100, 100, 100);
+    color: rgb(255, 255, 255);
+    transition: .3s;
+    border-radius: 20px;
+}*/

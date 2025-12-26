@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <title>Garbage Collection | Blog</title>
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/blogFrame.css">
+    <link rel="stylesheet" href="./css/blogHome.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbit&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="header">
+        <a id="headertitle1" href="#" onclick="loadPage('blogHome.html')">Garbage Collection</a>
+        <span id="headertitle2">잡생각 처리반</span>
+    </header>
+
+    <!--
+    <aside class="sidebar">
+        <ul>
+            <li><a href="#" onclick="loadPage('introduction.html')">About Me</a></li>
+            <li><a href="#" onclick="loadPage('project.html')">Projects</a></li>
+            <li><a href="#" onclick="loadPage('publication.html')">Publications</a></li>
+        </ul>
+    </aside>-->
+    
+    <!-- 동적으로 내용이 들어갈 영역 -->
+    <div class="contentBackground">
+        <main id="content"></main>
+    </div>
+
+    <script>
+        function loadPage(page) {
+            fetch(`./pages/${page}`)
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('content').innerHTML = html;
+                })
+                .catch(err => console.error(err));
+        }
+
+        window.onload = () => {
+            loadPage("blogHome.html");
+        };
+    </script>
+</body>
+</html>
