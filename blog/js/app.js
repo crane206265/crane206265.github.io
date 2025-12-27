@@ -85,7 +85,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const file = window.location.pathname.split("/").pop(); // 예: "Antartica.html"
 
     // ✅ 특정 파일에서만 실행
-    if (file === "BlogFrame.html") {
+    if (file === "blogFrame.html") {
         loadPage("blogHome.html");
     }
     renderPrevNextCards(1);
