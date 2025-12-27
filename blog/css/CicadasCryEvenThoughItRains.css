@@ -81,14 +81,6 @@ a {
 /* ================================================================== */
 /* ========================== main content ========================== */
 /* ================================================================== */
-#mainSection {
-    font-family: "Orbit", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    height: 5000px;
-    background-color: rgba(81, 19, 19, 0.846);
-    z-index: 20;
-}
 
 /* ========================== title section ========================== */
 .titleSection {
@@ -172,12 +164,35 @@ a {
 
 /* ========================== content section ========================== */
 
+#mainSection {
+    font-family: "Orbit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    height: 5000px;
+    padding: 50px 70px;
+    background-color: rgb(255, 245, 245);
+    z-index: 20;
+}
+
 .contentBlock1 {
-    padding-top: 30px;
-    padding-left: 50px;
     height: 4000px;
-    background-color: rgb(255, 250, 250);
-    color: black
+    color: black;
+}
+
+.contentline1 {
+    display: block;
+    margin-bottom: 20px;
+    border-top: 1px solid black;
+}
+
+.contentTitle1 {
+    font-size: 2rem;
+    font-family: "Orbit", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    margin: 0;
+    padding : 0;
+    width: 80%;
 }
 
 .p1 {
@@ -188,4 +203,23 @@ a {
     margin: 0;
     padding : 0;
     width: 80%;
+}
+
+.p1-bold {
+    font-size: 1.2rem;
+    font-family: "Orbit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-weight: bold;
+    margin: 0;
+    padding : 0;
+    width: 80%;
+}
+
+.ly1-block {
+    margin: 20px 0;
+    padding: 20px 30px;
+    width: 80%;
+    background-color: rgba(255, 0, 0, 0.05);
+    border-radius: 15px;
 }
