@@ -3,6 +3,12 @@
 :root {
     --header-height: 11.5vh; /*11.5vh*/
     --titleSection-height: 400px;
+    --color1: rgb(218, 233, 253);
+    --color2: rgb(3, 26, 41);
+    --color3: rgba(0, 89, 255, 0.05);
+    --albumCoverImg: url('/blog/images/ThornApple_2ndAlbumCover.png');
+
+    --articleBlockColor1: rgba(55, 55, 55, 0.5);
 }
 
 .orbit-regular {
@@ -17,8 +23,7 @@
     height: var(--header-height);            /* 세로 */
     margin: 0 auto;           /* 바깥 여백 */
     padding: 0px 20px;            /* 안쪽 여백 */
-    background-color : rgb(32, 32, 32);        /* 배경 색 */
-    background-color: rgb(59, 10, 10);
+    background-color: var(--color2);
     box-sizing: border-box;   /* 패딩과 보더를 포함한 크기 계산 */
     z-index: 100;   /* 다른 요소들보다 위에 표시 */
     line-height: var(--header-height);
@@ -98,7 +103,7 @@ a {
     inset: 0;
     background:
         linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
-        url('/blog/images/ThornApple_1stAlbumCover.png');
+        var(--albumCoverImg);
     background-size: cover;        /* 꽉 채우기(잘릴 수 있음) */
     background-position: center;   /* 중앙 기준 */
     background-repeat: no-repeat;
@@ -170,18 +175,17 @@ a {
     font-style: normal;
     height: auto;
     padding: 50px 70px;
-    background-color: rgb(255, 245, 245);
+    background-color: var(--color1);
+    color: black;
     z-index: 20;
 }
 
 .contentBlock1 {
     height: auto;
-    color: black;
 }
 
 .contentBlockEnd {
-    height: 300px;
-    color: black
+    height: 300px
 }
 
 .contentline1 {
@@ -199,6 +203,107 @@ a {
     padding : 0;
     width: 80%;
 }
+
+.contentTitle2 {
+    font-size: 1.5rem;
+    font-family: "Orbit", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    margin: 0;
+    padding : 0;
+    width: 80%;
+}
+
+#EndContentSection {
+    font-family: "Orbit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    height: auto;
+    padding: 50px 70px;
+    background-color: var(--color2);
+    color: white;
+    z-index: 20;
+}
+
+/* ========================== article block section ========================== */
+
+.a-articleBlock1 {
+    text-decoration: none;
+    display: block;
+}
+
+.articleBlock1 {
+    background-color: var(--articleBlockColor1);
+    margin: 7.5px 10px 7.5px 10px;
+    height: 100px;
+    border-radius: 10px;
+    display: flex;
+    gap: 20px;
+}
+
+.articleBlock1:hover {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.517);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.articleBlockImg1 {
+    height: 80px;
+    width: auto;
+    border-radius: 10px;
+    margin: auto 10px;
+}
+
+.articleBlockTitleCol1 {
+    display: flex;
+    flex-direction: column;
+}
+
+.articleBlockTitle1 {
+    font-family: "Orbit", sans-serif;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: white;
+    margin: 15px 0px 0px 0px;
+}
+
+.articleBlockTitle2 {
+    font-family: "Orbit", sans-serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.921);
+    margin: 5px 0px 0px 0px;
+}
+
+.articleBlockContent1 {
+    font-family: "Orbit", sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(200, 200, 200, 0.921);
+    width: auto;
+}
+
+.articleBlockDate {
+    font-family: "Orbit", sans-serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: rgba(200, 200, 200, 0.921);
+    margin-left: auto;
+    margin-right: 1%;
+    align-content: center;
+}
+
+.articleBlockNumbering {
+    font-family: "Orbit", sans-serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: rgba(200, 200, 200, 0.921);
+    margin-left: 1%;
+    margin-right: 4%;
+    align-content: center;
+}
+
+/* ========================== font section ========================== */
 
 .p1 {
     font-size: 1.2rem;
@@ -225,6 +330,6 @@ a {
     margin: 20px 0;
     padding: 20px 30px;
     width: 80%;
-    background-color: rgba(255, 0, 0, 0.05);
+    background-color: var(--color3);
     border-radius: 15px;
 }
