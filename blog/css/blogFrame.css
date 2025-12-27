@@ -61,7 +61,7 @@
 /* for main content */
 .content {
     width: 100%;           /* 가로 */
-    height: 5000px;          /* 세로 */
+    height: auto;          /* 세로 */
     margin: 0;          /* 바깥 여백 */
     background-color : rgba(0, 0, 0, 0.02);        /* 글자 색 */
 }
@@ -73,7 +73,7 @@
     padding-left: 40px;
     padding-right: 20px;*/
     box-sizing: border-box;   /* 패딩과 보더를 포함한 크기 계산 */
-    height: 4900px;         /* 세로 */
+    height: auto;         /* 세로 */
 }
 
 
@@ -93,7 +93,7 @@ a {
 
 /* 사이트의 높이를 5000px로 만들어 스크롤 생성 */
 body {
-    height: 5000px;
+    height: auto;
     background-color: #ffffff;
 }
 

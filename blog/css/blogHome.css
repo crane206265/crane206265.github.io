@@ -8,7 +8,7 @@
     font-family: "Orbit", sans-serif;
     font-weight: 400;
     font-style: normal;
-    height: 5000px;
+    height: auto;
     background-color: rgba(45, 45, 45, 0.846);
 }
 
@@ -40,20 +40,133 @@
 }
 
 .contentBlock1 {
-    padding-top: 30px;
-    padding-left: 50px;
-    height: 4000px;
+    padding: 30px 70px 0px 70px;
+    height: auto;
     background-color: rgba(32, 32, 32, 0.846);
     color: white
 }
 
-.p1 {
-    font-size: 1.2rem;
+.contentBlockEnd {
+    padding: 30px 70px 0px 70px;
+    height: 300px;
+    background-color: rgba(32, 32, 32, 0.846);
+    color: white
+}
+
+.contentline1 {
+    display: block;
+    margin-bottom: 20px;
+    border-top: 1px solid white;
+}
+
+.a-articleBlock1 {
+    text-decoration: none;
+    display: block;
+}
+
+.articleBlock1 {
+    background-color: rgba(55, 55, 55, 0.846);
+    margin: 7.5px 10px 7.5px 10px;
+    height: 100px;
+    border-radius: 10px;
+    display: flex;
+    gap: 20px;
+}
+
+.articleBlock1:hover {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.517);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.articleBlockImg1 {
+    height: 80px;
+    width: auto;
+    border-radius: 10px;
+    margin: auto 10px;
+}
+
+.articleBlockTitleCol1 {
+    display: flex;
+    flex-direction: column;
+}
+
+.articleBlockTitle1 {
     font-family: "Orbit", sans-serif;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: white;
+    margin: 15px 0px 0px 0px;
+}
+
+.articleBlockTitle2 {
+    font-family: "Orbit", sans-serif;
+    font-size: 1.2rem;
     font-weight: 400;
+    color: rgba(255, 255, 255, 0.921);
+    margin: 5px 0px 0px 0px;
+}
+
+.articleBlockContent1 {
+    font-family: "Orbit", sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(200, 200, 200, 0.921);
+    width: auto;
+}
+
+.articleBlockDate {
+    font-family: "Orbit", sans-serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: rgba(200, 200, 200, 0.921);
+    margin-left: auto;
+    margin-right: 1%;
+    align-content: center;
+}
+
+.articleBlockNumbering {
+    font-family: "Orbit", sans-serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: rgba(200, 200, 200, 0.921);
+    margin-left: 1%;
+    margin-right: 4%;
+    align-content: center;
+}
+
+/* ========================== font section ========================== */
+
+.p1 .p1-bold .p2 .p2-bold .p3 {
+    font-family: "Orbit", sans-serif;
     font-style: normal;
     margin: 0;
     padding : 0;
     width: 80%;
+}
+
+.p1 {
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+.p1-bold {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.p2 {
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.p2-bold {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.p1 {
+    font-size: 1rem;
+    font-weight: 400;
 }
 

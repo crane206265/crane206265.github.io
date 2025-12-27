@@ -15,39 +15,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbit&display=swap" rel="stylesheet">
 </head>
 
+<script src="/blog/js/app.js" defer></script>
+
 <body>
     <header class="header">
         <a id="headertitle1" href="#" onclick="loadPage('blogHome.html')">Garbage Collection</a>
         <span id="headertitle2">잡생각 처리반</span>
     </header>
-
-    <!--
-    <aside class="sidebar">
-        <ul>
-            <li><a href="#" onclick="loadPage('introduction.html')">About Me</a></li>
-            <li><a href="#" onclick="loadPage('project.html')">Projects</a></li>
-            <li><a href="#" onclick="loadPage('publication.html')">Publications</a></li>
-        </ul>
-    </aside>-->
     
     <!-- 동적으로 내용이 들어갈 영역 -->
     <div class="contentBackground">
         <main id="content"></main>
     </div>
-
-    <script>
-        function loadPage(page) {
-            fetch(`./pages/${page}`)
-                .then(r => r.text())
-                .then(html => {
-                    document.getElementById('content').innerHTML = html;
-                })
-                .catch(err => console.error(err));
-        }
-
-        window.onload = () => {
-            loadPage("blogHome.html");
-        };
-    </script>
 </body>
 </html>

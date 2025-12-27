@@ -55,7 +55,7 @@
 /* for main content */
 .content {
     width: 100%;           /* 가로 */
-    height: 5000px;          /* 세로 */
+    height: auto;          /* 세로 */
     margin: 0;          /* 바깥 여백 */
     background-color: rgba(45, 45, 45, 0.846);
 }
@@ -63,7 +63,7 @@
 .contentBackground {
     background-color: rgba(45, 45, 45, 0.846);
     box-sizing: border-box;   /* 패딩과 보더를 포함한 크기 계산 */
-    height: 4900px;         /* 세로 */
+    height: auto;         /* 세로 */
 }
 
 body{
@@ -166,15 +166,20 @@ a {
     font-family: "Orbit", sans-serif;
     font-weight: 400;
     font-style: normal;
-    height: 5000px;
+    height: auto;
     padding: 50px 70px;
     background-color: rgb(218, 233, 253);
     z-index: 20;
 }
 
 .contentBlock1 {
-    height: 4000px;
+    height: auto;
     color: black;
+}
+
+.contentBlockEnd {
+    height: 300px;
+    color: black
 }
 
 .contentline1 {
