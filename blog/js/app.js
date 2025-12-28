@@ -1,3 +1,4 @@
+/*
 function loadPage(page) {
     fetch(`/blog/pages/${page}`)
         .then(r => r.text())
@@ -9,6 +10,7 @@ function loadPage(page) {
         })
         .catch(console.error);
 }
+*/
 
 async function renderRecentPosts() {
     const mount = document.getElementById("recentPostList");
@@ -85,8 +87,8 @@ window.addEventListener("DOMContentLoaded", () => {
     const file = window.location.pathname.split("/").pop(); // 예: "Antartica.html"
 
     // ✅ 특정 파일에서만 실행
-    if (file === "blogFrame.html") {
-        loadPage("blogHome.html");
+    if (file === "blogHome.html") {
+        renderRecentPosts();
     }
     renderPrevNextCards(1);
 });
