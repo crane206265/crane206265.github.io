@@ -47,7 +47,7 @@
 
         /* title section variables */
         --titleSectionHeight: 300px;
-        --titleSectionGap: 30px;
+        --titleSectionGap: 20px;
 
         --mainImg1Height: 150px;
         --titleBlockPaddingHori: 0px;
@@ -169,6 +169,7 @@ a {
     display: flex;
     gap: var(--titleSectionGap);
     height: var(--titleSectionHeight);
+    padding: 0px var(--titleSectionGap);
     z-index: 20;
 }
 
@@ -204,7 +205,6 @@ a {
 
 .mainImgBlock {
     padding-top: 0px;
-    margin-left: var(--titleSectionGap);
     height: var(--titleSectionHeight);
 }
 

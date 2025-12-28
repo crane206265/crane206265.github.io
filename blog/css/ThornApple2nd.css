@@ -2,13 +2,72 @@
 /* 변수를 통해 통제 */
 :root {
     --header-height: 11.5vh; /*11.5vh*/
-    --titleSection-height: 400px;
+
     --color1: rgb(218, 233, 253);
     --color2: rgb(3, 26, 41);
     --color3: rgba(0, 89, 255, 0.05);
     --albumCoverImg: url('/blog/images/ThornApple_2ndAlbumCover.png');
 
     --articleBlockColor1: rgba(55, 55, 55, 0.5);
+}
+
+/* 반응형 변수들 */
+:root {
+    --headerTitle1Size: 2rem;
+    --headerTitle2Size: 1.15rem;
+
+    /* title section variables */
+    --titleSectionHeight: 400px;
+    --titleSectionGap: 50px;
+
+    --mainImg1Height: 300px;
+    --titleBlockPaddingHori: 0px;
+    --titleBlockPaddingVert: 50px;
+    --title1Size: 3rem;
+    --title2Size: 1.5rem;
+
+    --mainContentPaddingHori: 70px;
+    --mainContentPaddingVert: 50px;
+
+    --contentBlockTitle1Size: 2rem;
+    --contentBlockTitle2Size: 1.5rem;
+
+    --lyrBlock1PaddingHori: 30px;
+    --lyrBlock1PaddingVert: 20px;
+    --lyrBlock1FontSize: 1.0rem;
+
+    --p1Size: 1.5rem;
+    --p3Size: 1.1rem;
+}
+
+@media (max-width: 480px) {
+    :root {
+        --headerTitle1Size: 1.8rem;
+        --headerTitle2Size: 1rem;
+
+        /* title section variables */
+        --titleSectionHeight: 300px;
+        --titleSectionGap: 30px;
+
+        --mainImg1Height: 150px;
+        --titleBlockPaddingHori: 0px;
+        --titleBlockPaddingVert: 20px;
+        --title1Size: 2.2rem;
+        --title2Size: 0.9rem;
+        
+        --mainContentPaddingHori: 40px;
+        --mainContentPaddingVert: 20px;
+
+        --contentBlockTitle1Size: 1.5rem;
+        --contentBlockTitle2Size: 1.2rem;
+
+        --lyrBlock1PaddingHori: 25px;
+        --lyrBlock1PaddingVert: 15px;
+        --lyrBlock1FontSize: 0.9rem;
+
+        --p1Size: 1.2rem;
+        --p3Size: 0.9rem;
+    }
 }
 
 .orbit-regular {
@@ -30,12 +89,28 @@
     align-items: center;
 }
 
+.header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+@media (max-width: 480px){
+  .header{
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: normal;
+    padding-top: 14px;
+    padding-bottom: 10px;
+  }
+}
+
 #headertitle1 {
     font-family: "Orbit", sans-serif;
     font-weight: 400;
     font-style: normal;
     font-weight: bold;
-    font-size: 2rem; /*2.3rem*/
+    font-size: var(--headerTitle1Size); /*2.3rem*/
 
     margin: 00px 0 00px 20px; /* 위, 오른쪽, 아래, 왼쪽 순서 */
     display: inline-block;  /* h1이 블록 요소이므로 인라인 블록으로 변경 */
@@ -48,7 +123,7 @@
     font-weight: 400;
     font-style: normal;
     font-weight: bold;
-    font-size: 1.15rem; /*1.3rem*/
+    font-size: var(--headerTitle2Size); /*1.3rem*/
 
     margin: 00px 0 00px 20px; /* 위, 오른쪽, 아래, 왼쪽 순서 */
     display: inline-block;  /* h1이 블록 요소이므로 인라인 블록으로 변경 */
@@ -92,8 +167,9 @@ a {
     position: relative;
     overflow: hidden;
     display: flex;
-    gap: 50px;
-    height: var(--titleSection-height);
+    gap: var(--titleSectionGap);
+    height: var(--titleSectionHeight);
+    padding: 0px var(--titleSectionGap);
     z-index: 20;
 }
 
@@ -117,21 +193,19 @@ a {
 }
 
 #mainImg1 {
-    height: calc(var(--titleSection-height) - 100px);
+    height: var(--mainImg1Height);
     width: auto;
     border-radius: 30px;
 }
 
 #mainImg1:hover {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-    border-radius: 30px;
     transition: all 0.3s ease;
 }
 
 .mainImgBlock {
     padding-top: 0px;
-    margin-left: 50px;
-    height: var(--titleSection-height);
+    height: var(--titleSectionHeight);
 }
 
 .mainImgBlock * {
@@ -141,13 +215,13 @@ a {
 
 
 .titleBlock {
-    padding: 50px 0px;
+    padding: var(--titleBlockPaddingVert) var(--titleBlockPaddingHori);
     margin-left: 0px;
     height: calc(var(--titleSection-height) - 100px);
 }
 
 .title1 {
-    font-size: 3rem;
+    font-size: var(--title1Size);
     font-family: "Orbit", sans-serif;
     font-weight: 700;
     font-style: normal;
@@ -157,7 +231,7 @@ a {
 }
 
 .title2 {
-    font-size: 1.5rem;
+    font-size: var(--title2Size);
     font-family: "Orbit", sans-serif;
     font-weight: 700;
     font-style: normal;
@@ -174,7 +248,7 @@ a {
     font-weight: 400;
     font-style: normal;
     height: auto;
-    padding: 50px 70px;
+    padding: var(--mainContentPaddingVert) var(--mainContentPaddingHori);
     background-color: var(--color1);
     color: black;
     z-index: 20;
@@ -195,7 +269,7 @@ a {
 }
 
 .contentTitle1 {
-    font-size: 2rem;
+    font-size: var(--contentBlockTitle1Size);
     font-family: "Orbit", sans-serif;
     font-weight: 700;
     font-style: normal;
@@ -205,7 +279,7 @@ a {
 }
 
 .contentTitle2 {
-    font-size: 1.5rem;
+    font-size: var(--contentBlockTitle2Size);
     font-family: "Orbit", sans-serif;
     font-weight: 700;
     font-style: normal;
@@ -225,111 +299,37 @@ a {
     z-index: 20;
 }
 
-/* ========================== article block section ========================== */
-
-.a-articleBlock1 {
-    text-decoration: none;
-    display: block;
-}
-
-.articleBlock1 {
-    background-color: var(--articleBlockColor1);
-    margin: 7.5px 10px 7.5px 10px;
-    height: 100px;
-    border-radius: 10px;
-    display: flex;
-    gap: 20px;
-}
-
-.articleBlock1:hover {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.517);
-    border-radius: 10px;
-    transition: all 0.3s ease;
-}
-
-.articleBlockImg1 {
-    height: 80px;
-    width: auto;
-    border-radius: 10px;
-    margin: auto 10px;
-}
-
-.articleBlockTitleCol1 {
-    display: flex;
-    flex-direction: column;
-}
-
-.articleBlockTitle1 {
-    font-family: "Orbit", sans-serif;
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: white;
-    margin: 15px 0px 0px 0px;
-}
-
-.articleBlockTitle2 {
-    font-family: "Orbit", sans-serif;
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.921);
-    margin: 5px 0px 0px 0px;
-}
-
-.articleBlockContent1 {
-    font-family: "Orbit", sans-serif;
-    font-size: 1rem;
-    font-weight: 400;
-    color: rgba(200, 200, 200, 0.921);
-    width: auto;
-}
-
-.articleBlockDate {
-    font-family: "Orbit", sans-serif;
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: rgba(200, 200, 200, 0.921);
-    margin-left: auto;
-    margin-right: 1%;
-    align-content: center;
-}
-
-.articleBlockNumbering {
-    font-family: "Orbit", sans-serif;
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: rgba(200, 200, 200, 0.921);
-    margin-left: 1%;
-    margin-right: 4%;
-    align-content: center;
-}
 
 /* ========================== font section ========================== */
 
-.p1 {
-    font-size: 1.2rem;
+.p1 .p1-bold .p3 {
     font-family: "Orbit", sans-serif;
-    font-weight: 400;
     font-style: normal;
     margin: 0;
     padding : 0;
     width: 80%;
 }
 
-.p1-bold {
-    font-size: 1.2rem;
-    font-family: "Orbit", sans-serif;
+.p1 {
+    font-size: var(--p1Size);
     font-weight: 400;
-    font-style: normal;
+}
+
+.p1-bold {
+    font-size: var(--p1Size);
     font-weight: bold;
-    margin: 0;
-    padding : 0;
-    width: 80%;
+}
+
+.p3 {
+    font-size: var(--p3Size);
+    font-weight: 400;
 }
 
 .ly1-block {
     margin: 20px 0;
-    padding: 20px 30px;
+    padding: var(--lyrBlock1PaddingVert) var(--lyrBlock1PaddingHori);
     width: 80%;
     background-color: var(--color3);
     border-radius: 15px;
+    font-size: var(--lyrBlock1FontSize);
 }
