@@ -1,0 +1,115 @@
+
+/* 변수를 통해 통제 */
+:root {
+    --articleBlockHeight: 100px;
+    --articleBlockGap: 20px;
+    --articleBlockMarginHori: 10px;
+
+    --articleBlockTitle1Size: 1.4rem;
+    --articleBlockTitle2Size: 1.2rem;
+    --articleBlockDateSize: 1.2rem;
+    --articleBlockNumberingSize: 1.2rem;
+    --articleBlockContent1Size: 1rem;
+    --articleTitle1MarginTop: 15px;
+    --articleTitle2MarginTop: 5px;
+}
+
+@media (max-width: 480px) {
+    :root {
+        --articleBlockHeight: 70px;
+        --articleBlockGap: 5px;
+        --articleBlockMarginHori: 5px;
+
+        --articleBlockTitle1Size: 1.0rem;
+        --articleBlockTitle2Size: 0.8rem;
+        --articleBlockDateSize: 0rem;
+        --articleBlockNumberingSize: 0.7rem;
+        --articleBlockContent1Size: 0.7rem;
+        --articleTitle1MarginTop: 10px;
+        --articleTitle2MarginTop: 3px;
+    }
+}
+
+.orbit-regular {
+    font-family: "Orbit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* ========================== article block section ========================== */
+
+.a-articleBlock1 {
+    text-decoration: none;
+    display: block;
+}
+
+.articleBlock1 {
+    background-color: rgba(55, 55, 55, 0.846);
+    margin: 7.5px var(--articleBlockMarginHori) 7.5px var(--articleBlockMarginHori);
+    height: var(--articleBlockHeight);
+    border-radius: 10px;
+    display: flex;
+    gap: var(--articleBlockGap);
+}
+
+.articleBlock1:hover {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.517);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.articleBlockImg1 {
+    height: 80%;
+    width: auto;
+    border-radius: 10px;
+    margin: auto 10px;
+}
+
+.articleBlockTitleCol1 {
+    display: flex;
+    flex-direction: column;
+}
+
+.articleBlockTitle1 {
+    font-family: "Orbit", sans-serif;
+    font-size: var(--articleBlockTitle1Size);
+    font-weight: bold;
+    color: white;
+    margin: var(--articleTitle1MarginTop) 0px 0px 0px;
+}
+
+.articleBlockTitle2 {
+    font-family: "Orbit", sans-serif;
+    font-size: var(--articleBlockTitle2Size);
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.921);
+    margin: var(--articleTitle2MarginTop) 0px 0px 0px;
+}
+
+.articleBlockContent1 {
+    font-family: "Orbit", sans-serif;
+    font-size: var(--articleBlockContent1Size);
+    font-weight: 400;
+    color: rgba(200, 200, 200, 0.921);
+    width: auto;
+}
+
+.articleBlockDate {
+    font-family: "Orbit", sans-serif;
+    font-size: var(--articleBlockDateSize);
+    font-weight: 500;
+    color: rgba(200, 200, 200, 0.921);
+    margin-left: auto;
+    margin-right: 1%;
+    align-content: center;
+}
+
+.articleBlockNumbering {
+    font-family: "Orbit", sans-serif;
+    font-size: var(--articleBlockNumberingSize);
+    font-weight: 500;
+    color: rgba(200, 200, 200, 0.921);
+    margin-left: 1%;
+    margin-right: 4%;
+    align-content: center;
+}

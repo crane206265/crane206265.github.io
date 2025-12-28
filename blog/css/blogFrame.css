@@ -6,6 +6,19 @@
     --side-bar-height: 90vh;
 }
 
+/* 반응형 변수들 */
+:root {
+    --headerTitle1Size: 2rem;
+    --headerTitle2Size: 1.15rem;
+}
+
+@media (max-width: 480px) {
+    :root {
+        --headerTitle1Size: 1.8rem;
+        --headerTitle2Size: 1rem;
+    }
+}
+
 .orbit-regular {
   font-family: "Orbit", sans-serif;
   font-weight: 400;
@@ -31,12 +44,28 @@
     align-items: center;
 }
 
+.header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+@media (max-width: 480px){
+  .header{
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: normal;
+    padding-top: 14px;
+    padding-bottom: 10px;
+  }
+}
+
 #headertitle1 {
     font-family: "Orbit", sans-serif;
     font-weight: 400;
     font-style: normal;
     font-weight: bold;
-    font-size: 2rem; /*2.3rem*/
+    font-size: var(--headerTitle1Size); /*2.3rem*/
 
     margin: 00px 0 00px 20px; /* 위, 오른쪽, 아래, 왼쪽 순서 */
     display: inline-block;  /* h1이 블록 요소이므로 인라인 블록으로 변경 */
@@ -49,7 +78,7 @@
     font-weight: 400;
     font-style: normal;
     font-weight: bold;
-    font-size: 1.15rem; /*1.3rem*/
+    font-size: var(--headerTitle2Size); /*1.3rem*/
 
     margin: 00px 0 00px 20px; /* 위, 오른쪽, 아래, 왼쪽 순서 */
     display: inline-block;  /* h1이 블록 요소이므로 인라인 블록으로 변경 */
