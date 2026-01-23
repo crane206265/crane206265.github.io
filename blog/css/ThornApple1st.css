@@ -59,12 +59,12 @@
         --mainContentPaddingHori: 40px;
         --mainContentPaddingVert: 20px;
 
-        --contentBlockTitle1Size: 1.5rem;
-        --contentBlockTitle2Size: 1.2rem;
+        --contentBlockTitle1Size: 1.1rem;
+        --contentBlockTitle2Size: 0.9rem;
 
         --lyrBlock1PaddingHori: 25px;
         --lyrBlock1PaddingVert: 15px;
-        --lyrBlock1FontSize: 0.9rem;
+        --lyrBlock1FontSize: 1.0rem;
 
         --p1Size: 1.2rem;
         --p3Size: 0.9rem;
