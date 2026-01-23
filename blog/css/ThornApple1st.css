@@ -294,7 +294,7 @@ a {
     font-weight: 400;
     font-style: normal;
     height: auto;
-    padding: 50px 70px;
+    padding: var(--mainContentPaddingVert) var(--mainContentPaddingHori);
     background-color: var(--color2);
     color: white;
     z-index: 20;
