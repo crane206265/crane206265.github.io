@@ -326,10 +326,16 @@ a {
     font-weight: 400;
 }
 
+.p-block {
+    width: 80%;
+    margin: 0;
+    padding: 0;
+}
+
 .ly1-block {
     margin: 20px 0;
     padding: var(--lyrBlock1PaddingVert) var(--lyrBlock1PaddingHori);
-    width: 80%;
+    width: 75%;
     background-color: var(--color3);
     border-radius: 15px;
     font-size: var(--lyrBlock1FontSize);
