@@ -1,168 +1,106 @@
-<section id="project">
-    <h2 class="title1">Current Projects</h2>
-    <hr color="black" class="topline linemaxwidth">
-    <div class="block1">
-        <p class="p1" font-size="1.3rem">
-            These are projects that I am currently working on. Some are being worked with other people, and some are being worked alone.
-            Please understand that the contents of the projects are not fully disclosed due to research ethics.
-            <br>
-            If you have any ideas or want to join, please feel free to contact me.
-        </p>
-    </div>
-
-    <br>
-    <h2 class="title2">Asteroid RL</h2>
-    <hr class="leftline linemaxwidth" color="gray">
-    <div class="block2">
-        <p class="p2" font-size="1.3rem">
-            Asteroids are a kind of solar system minor bodies. They have various shapes, since they are not massive enougth to be spherical,
-            so it is important to know their shapes to understand the solar system formation and evolution.
-            <br>
-            Lightcurve inversion is a method to reconstruct the shape of asteroids, using the change of flux as the asteroid rotates.
-            It is also important in mathematics field, as it is a kind of inverse problem.
-            This problem was first studied by <a class="ref" href="https://ui.adsabs.harvard.edu/abs/2001Icar..153...24K/abstract">Kaasalainen et al.(2001)</a>,
-            and many researchers have developed various algorithms to solve this problem.
-            <br><br>
-            I am trying to solve this problem using reinforcement learning, which is a type of deep learning.
-        </p>
-    </div>
-
-    <br>
-    <h2 class="title2">STOOP(Shortest Time Observation Order Program)</h2>
-    <hr class="leftline linemaxwidth" color="gray">
-    <div class="block2">
-        <p class="p2" font-size="1.3rem">
-            -
-        </p>
-    </div>
-
-
-    <br><br>
-    <h2 class="title1">Planned Projects</h2>
-    <hr color="black" class="topline linemaxwidth">
-    <div class="block1">
-        <p class="p1" font-size="1.3rem">
-            Planned Projects will be updated soon. If you have any ideas about planning these projects, please feel free to contact me.
-        </p>
-    </div>
-
-
-    <br><br>
-    <h2 class="title1">Past Projects</h2>
-    <hr color="black" class="topline linemaxwidth">
-    <div class="block1">
-        <p class="p1" font-size="1.3rem">
-            Past Projects will be updated soon. If you have any ideas to improve these projects, please feel free to contact me.
-        </p>
-    </div>
+<section id="project" class="section-block" aria-labelledby="research-title">
+  <h1 id="research-title">Selected Research Projects</h1>
+  <p class="content-text">
+    This page provides brief descriptions of publicly shareable aspects of my ongoing and completed research projects.
+    I welcome discussions and potential collaborations related to these topics.
+  </p>
 </section>
 
-<style>
-    :root {
-        --icon-width: auto;
-        --icon-height: 30vh;
-        --row-gap: 110px;
-        --lineminwidth: 600px;
-        --valuepadding: none;
-        --linewidth: 70vw;
-    }
+<section class="project-stack" aria-label="Research project list">
+  <article id="vlbi-pta" class="project-card wide-card">
+    <p class="meta">Observational Cosmology and Astronomy Lab, KAIST &middot; May 2026-Present &middot; Undergraduate Research Program</p>
+    <h2>VLBI-Assisted Localization of Continuous Gravitational-Wave Sources</h2>
+    <p>
+      Investigating how VLBI astrometric information can improve the localization of continuous gravitational-wave
+      sources with SKAO-era pulsar timing arrays, with the eventual goal of identifying possible host galaxies of
+      supermassive black-hole binaries.
+    </p>
+    <p>
+      The project studies how pulsar-distance and astrometric priors affect pulsar-term phase uncertainty and
+      localization performance in the SKAO era. It also frames a resource-allocation question: which pulsars should be
+      prioritized for VLBI observations if the goal is to reduce host-galaxy candidate regions.
+    </p>
+    <div class="tag-group">
+      <span class="tag">VLBI</span>
+      <span class="tag">Pulsar Timing Arrays</span>
+      <span class="tag">Gravitational Waves</span>
+      <span class="tag">Radio Astronomy</span>
+      <span class="tag">SKAO</span>
+      <span class="tag">Astrometry</span>
+    </div>
+  </article>
 
-    @media (max-width: 600px) and (min-width: 400px) {
-        :root {
-            --icon-width: 50vw;
-            --icon-height: auto;
-            --row-gap: 20vw;
-            --lineminwidth: none;
-            --valuepadding: 20px;
-            --linewidth: 70vw;
-        }
-    }
+  <article id="asteroid-lightcurve" class="project-card wide-card">
+    <p class="meta">Undergraduate Individual Study, ObsCAL, KAIST &middot; Jul. 2024-Aug. 2026</p>
+    <h2>Neural-Surrogate-Guided Sequential Reshaping for Asteroid Lightcurve Inversion</h2>
+    <p>
+      Developing a neural-surrogate-guided optimization framework that sequentially modifies a three-dimensional
+      asteroid shape to reproduce multiple observed lightcurves. The project combines synthetic forward modeling,
+      inverse-problem optimization, and machine-learning-based reward prediction.
+    </p>
+    <p>
+      The work focuses on improving initial conditions and sequential action selection while reducing the need for
+      expensive forward-model evaluations. The project also investigates the non-uniqueness of shape reconstruction
+      under limited observation geometries.
+    </p>
+    <div class="tag-group">
+      <span class="tag">Asteroids</span>
+      <span class="tag">Lightcurve Inversion</span>
+      <span class="tag">Inverse Problems</span>
+      <span class="tag">Optimization</span>
+      <span class="tag">Deep Learning</span>
+      <span class="tag">Scientific Machine Learning</span>
+      <span class="tag">Python</span>
+    </div>
+  </article>
 
-    @media (max-width: 400px) {
-        :root {
-            --linewidth: 300px;
-        }
-    }
+  <article id="black-hole-ray-tracing" class="project-card wide-card">
+    <p class="meta">Independent / Research Project, KAIST &middot; May 2026-Present</p>
+    <h2>Black-Hole Ray Tracing and VLBI Imaging</h2>
+    <p>
+      Implemented general relativistic ray tracing for black-hole imaging and accretion-disk visualization. The project
+      is being extended toward simulated VLBI imaging and the observational interpretation of supermassive black holes.
+    </p>
+    <div class="tag-group">
+      <span class="tag">General Relativity</span>
+      <span class="tag">Black Holes</span>
+      <span class="tag">Ray Tracing</span>
+      <span class="tag">VLBI</span>
+      <span class="tag">Numerical Simulation</span>
+      <span class="tag">Python</span>
+    </div>
+  </article>
 
-    .title1 {
-        font-size: 1.9rem;
-        font-weight: bold;
-        font-family: "Trebuchet MS", Dotum, Arial;
-        padding: 5px 10px 10px 10px;
-        margin: 0;
-    }
+  <article id="telescope-scheduling" class="project-card wide-card">
+    <p class="meta">Research Project, KAIST &middot; Mar. 2025-Present</p>
+    <h2>Optimized Observation and Routing for Telescopes</h2>
+    <p>
+      Developing optimization-oriented methods for telescope observation planning and routing, with the goal of reducing
+      operational overhead such as unnecessary slewing time while accounting for observational constraints.
+    </p>
+    <p>
+      My contributions focus on algorithmic planning and analysis related to observation constraints such as moonlight
+      and expected signal-to-noise ratio.
+    </p>
+    <div class="tag-group">
+      <span class="tag">Telescope Scheduling</span>
+      <span class="tag">Optimization</span>
+      <span class="tag">Observation Planning</span>
+      <span class="tag">Astronomy Software</span>
+    </div>
+  </article>
+</section>
 
-    .title2 {
-        font-size: 1.4rem;
-        font-weight: bold;
-        font-family: "Trebuchet MS", Dotum, Arial;
-        padding: 0px 10px 0px 10px;
-        margin: 0;
-    }
-
-    .ref {
-        text-decoration: none;
-        color: blue;
-    }
-
-    .block1 {
-        display: block;
-        clear: both;
-        padding: 5px 0px 5px 10px;
-        display: flex;
-    }
-
-    .block2 {
-        display: block;
-        clear: both;
-        padding: 0px 0px 5px 10px;
-        display: flex;
-    }
-
-    /* 화면이 좁아지면 세로로 */
-    @media (max-width: 600px) {
-        .block1 {
-            flex-direction: column;
-        }
-    }
-
-    .p1 {
-        font-size: 1.1rem;
-        font-family: "Trebuchet MS", Dotum, Arial;
-        padding: 10px 10px 5px 10px;
-        margin: 0;
-        width: 80%;
-    }
-
-    .p2 {
-        font-size: 1.1rem;
-        font-family: "Trebuchet MS", Dotum, Arial;
-        padding: 0px 10px 5px 0px;
-        margin: 0;
-        width: 80%;
-    }
-
-    .topline {
-        width: 85vw;
-        min-width: var(--lineminwidth);
-        height: 2px;
-        margin-left: 0;
-        border: none;
-    }
-
-    .leftline {
-        width: 70vw;
-        min-width: var(--lineminwidth);
-        height: 1px;
-        margin-left: 0;
-        margin-top: 20px;
-        margin-bottom: 20px;
-        border: none;
-    }
-
-    @media (max-width: 600px) {
-        .linemaxwidth {
-            width: var(--linewidth);
-        }
-    }
-</style>
+<section class="section-block" aria-labelledby="earlier-projects-title">
+  <h2 id="earlier-projects-title">Earlier Projects</h2>
+  <div class="compact-card-list">
+    <article>
+      <h3>Reinforcement-learning approach to finding shortest-time rocket routes in a gravitational field</h3>
+      <p class="meta">Independent / Student Research, Jeonbuk Science High School &middot; 2023</p>
+    </article>
+    <article>
+      <h3>Deep-learning-based facial-expression image generation</h3>
+      <p class="meta">Independent / Student Research, Jeonbuk Science High School &middot; 2023</p>
+    </article>
+  </div>
+</section>

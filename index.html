@@ -1,51 +1,68 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hakjin Lee, undergraduate researcher in Physics at KAIST working on radio astronomy and computational astrophysics.">
   <link rel="stylesheet" href="main_style.css">
-  <title>Hakjin Lee | Welcome</title>
-
+  <title>Hakjin Lee | Academic Homepage</title>
 </head>
 
 <body>
-    <header class="header">
-        <a id="headertitle1" href="#" onclick="loadPage('introduction.html')">Hakjin Lee</a>
-        <span id="headertitle2">Astrophysicist</span>
-    </header>
+  <header class="site-header">
+    <a class="site-title" href="#" onclick="loadPage('introduction.html'); return false;">Hakjin Lee</a>
+    <span class="site-subtitle">Undergraduate Researcher in Physics at KAIST</span>
+  </header>
 
-    <aside class="sidebar">
-        <ul>
-            <li><a href="#" onclick="loadPage('introduction.html')">About Me</a></li>
-            <li><a href="#" onclick="loadPage('project.html')">Projects</a></li>
-            <li><a href="#" onclick="loadPage('publication.html')">Publications</a></li>
-            <!-- <li><a href="#" onclick="loadPage('Blog.html')">Blog</a></li> -->
-            <!-- 접근 방지 ㅋㅋ -->
-            <li><a href="blog/blog.html">Blog</a></li>
+  <nav class="sidebar" aria-label="Primary navigation">
+    <ul>
+      <li><a href="#" onclick="loadPage('introduction.html'); return false;">About</a></li>
+      <li><a href="#" onclick="loadPage('project.html'); return false;">Research</a></li>
+      <li><a href="#" onclick="loadPage('publication.html'); return false;">Outputs</a></li>
+      <li><a href="#" onclick="loadPage('introduction.html', 'cv'); return false;">CV</a></li>
+      <li><a href="blog/blogHome.html">Blog</a></li>
+    </ul>
+  </nav>
 
-        </ul>
-    </aside>
-    
-    <!-- 동적으로 내용이 들어갈 영역 -->
-    <div class="contentBackground">
-        <main id="content"></main>
-    </div>
+  <div class="content-background">
+    <main id="content" class="page-container" tabindex="-1"></main>
+  </div>
 
-    <script>
-        function loadPage(page) {
-            fetch(`./pages/${page}`)
-                .then(r => r.text())
-                .then(html => {
-                    document.getElementById('content').innerHTML = html;
-                })
-                .catch(err => console.error(err));
-        }
+  <script>
+    function loadPage(page, targetId) {
+      fetch(`./pages/${page}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Could not load ${page}`);
+          }
+          return response.text();
+        })
+        .then(html => {
+          const content = document.getElementById('content');
+          content.innerHTML = html;
+          content.focus({ preventScroll: true });
 
-        window.onload = () => {
-            loadPage("introduction.html");
-        };
-    </script>
+          if (targetId) {
+            const target = document.getElementById(targetId);
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          document.getElementById('content').innerHTML = '<section class="section-block"><h1>Page unavailable</h1><p class="content-text">The requested page could not be loaded.</p></section>';
+        });
+    }
+
+    window.addEventListener('load', () => {
+      loadPage('introduction.html');
+    });
+  </script>
 </body>
+
 </html>

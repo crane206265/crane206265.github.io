@@ -1,274 +1,161 @@
-<section id="introduction">
-    <h2 class="title1">Hakjin Lee</h2>
-    <hr color="black" class="topline linemaxwidth">
-    
-    <div class="block1">
-        <img src="./images/IDPhoto.jpg?v=1" alt="IDPhoto" id="IDPhoto">
-        <p class="p1" font-size="1.3rem">
-            I am an undergraduate student at <span style="font-weight: 600;">Department of Physics, KAIST</span>,
-            double majoring in <span style="font-weight: 600;">School of Computing</span>, and <span style="font-weight: 600;">Department of Mathematical Science</span>.
-            I am studying physics to understand the universe, computing to solve those problems, and mathematics to understand the underlying structure of those problems.
-            My research interest includes <span style="font-weight: 600;">compact object, radio astronomy, asteroid, optimization, and deep learning</span>.
-            <br><br>
-            I am currently working in ObsCAL(Observational Cosmology and Astrophysics Lab) in KAIST
-            as undergraduate individual study, since summer 2025.
-        </p>
+<section id="introduction" class="section-block hero-section" aria-labelledby="intro-title">
+  <div class="hero-copy">
+    <p class="eyebrow">Undergraduate Researcher in Astrophysics at KAIST</p>
+    <h1 id="intro-title">Hakjin Lee</h1>
+    <p class="hero-lede">
+      Radio astronomy &middot; VLBI &middot; Pulsar timing arrays<br>
+      Computational astrophysics &middot; Inverse problems
+    </p>
+    <div class="action-row" aria-label="Primary links">
+      <a class="button" href="#" onclick="loadPage('project.html'); return false;">Research</a>
+      <a class="button" href="mailto:crane206265@kaist.ac.kr?subject=CV%20request">Request CV</a>
+      <a class="button" href="https://github.com/crane206265" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="button" href="mailto:crane206265@kaist.ac.kr">Email</a>
     </div>
-    
-    <div class="block1">
-        <p class="p1">
-            My current research topic is <span style="font-weight: 600;"><i>Neural-Surrogate-Guided Sequential Reshaping for Asteroid Lightcurve Inversion</i></span>.
-            In this research, we developed the neural surrogate model for asteroid lightcurve inversion, especially the generator of good initial conditions for the lightcurve inversion.
-            This could replace the role of asteroid researchers' intuition and experience, the inference of initial conditions.
-            <br>
-            Also, I'm participating in the development of an automatic observation scheduling program, <span style="font-weight: 600;">OORT(Optimzed Observation & Routing for Telescopes)</span>.
-            OORT is open-source auto-scheduling tool of telescopes, for astronomers and amateur observers. For given observation requests, it minimizes the time waste of telescope operation, such as slewing time.
-            I'm the co-founder of the team, contributing to the algorithmic part and moonlit / SNR analysis part.
-        </p>
-    </div>
-
-    <hr class="leftline linemaxwidth" color="gray">
-    <h2 class="title2">Curriculum Vitae</h2>
-    <div class="block1">
-        <div class="info1">
-            <div class="row">
-                <span class="label">Education:</span>
-                <span class="value1">Dept. of Physics, KAIST(Korea Advanced Institute of Science and Technology)</span>
-                <span class="value2">2024-Present</span>
-            </div>
-            <div class="row">
-                <span class="label"></span>
-                <span class="value1">School of Computing, KAIST(Korea Advanced Institute of Science and Technology)</span>
-                <span class="value2">2024-Present</span>
-            </div>
-            <div class="row">
-                <span class="label"></span>
-                <span class="value1">Dept. of Mathematical Science, KAIST(Korea Advanced Institute of Science and Technology)</span>
-                <span class="value2">2024-Present</span>
-            </div>
-            <div class="row">
-                <span class="label"></span>
-                <span class="value1">Jeonbuk Science High School</span>
-                <span class="value2">2022-2023</span>
-            </div>
-        </div>
-    </div>
-    <div class="block1">
-        <div class="info1">
-            <div class="row">
-                <span class="label">Awards:</span>
-                <span class="value1">Korea Presidential Science Scholarship</span>
-                <span class="value2">2024-Present</span>
-            </div>
-            <div class="row">
-                <span class="label"></span>
-                <span class="value1">KAIST Presidential Fellowship</span>
-                <span class="value2">2024-Present</span>
-            </div>
-            <div class="row">
-                <span class="label"></span>
-                <span class="value1">Gold Medal - International Olympiad on Astronomy and Astrophysics (IOAA)</span>
-                <span class="value2">2023</span>
-            </div>
-            <div class="row">
-                <span class="label"></span>
-                <span class="value1">II-nd Prize - International Astronomy Olympiad (IAO)</span>
-                <span class="value2">2022</span>
-            </div>
-        </div>
-    </div>
-
-    <hr class="linemaxwidth leftline" color="gray">
-    <h2 class="title2">Contact Me</h2>
-
-    <div class="block1">
-        <div class="info1">
-            <div class="row">
-                <span class="label"><img src="./images/LocationIcon.webp?v=1" alt="" class="icon">Location:</span>
-                <span class="value1">Daejeon, South Korea</span>
-            </div>
-            <div class="row">
-                <span class="label"><img src="./images/GitHubLogo.png?v=1" alt="" class="icon">GitHub:</span>
-                <a href="https://github.com/crane206265" class="value1">https://github.com/crane206265</a>
-            </div>
-            <div class="row">
-                <span class="label"><img src="./images/EmailIcon.png?v=1" alt="" class="icon">Email:</span>
-                <span class="value1">crane206265@kaist.ac.kr</span>
-            </div>
-        </div>
-    </div>
-
+  </div>
+  <img src="./images/IDPhoto.jpg?v=1" alt="Portrait of Hakjin Lee" class="profile-photo">
 </section>
 
-<style>
-    /* 반응형 웹 디자인을 위한 미디어 쿼리 */
-    :root {
-        --icon-width: auto;
-        --icon-height: 30vh;
-        --row-gap: 110px;
-        --lineminwidth: 600px;
-        --valuepadding: none;
-        --linewidth: 70vw;
-    }
+<section class="section-block" aria-labelledby="about-title">
+  <h2 id="about-title">About</h2>
+  <p class="content-text">
+    I am an undergraduate student in Physics at KAIST, double majoring in Computer Science and Mathematical Sciences.
+    My research focuses on radio astronomy and computational astrophysics, particularly VLBI, pulsar timing arrays,
+    compact objects, and astronomy-related inverse problems.
+  </p>
+  <p class="content-text">
+    I am studying physics to understand the universe, computing to solve those problems, and mathematics to understand
+    their underlying structure. Since summer 2025, I have participated in undergraduate research at ObsCAL
+    (Observational Cosmology and Astronomy Lab) at KAIST, first through an individual study and, from June 2026,
+    through the Undergraduate Research Program.
+  </p>
+  <div class="tag-group" aria-label="Research interests and methods">
+    <span class="tag">Radio Astronomy</span>
+    <span class="tag">VLBI</span>
+    <span class="tag">Pulsar Timing Arrays</span>
+    <span class="tag">Compact Objects</span>
+    <span class="tag">Gravitational Waves</span>
+    <span class="tag">Inverse Problems</span>
+    <span class="tag">Numerical Simulation</span>
+    <span class="tag">Optimization</span>
+    <span class="tag">Scientific Machine Learning</span>
+  </div>
+</section>
 
-    @media (max-width: 600px) and (min-width: 400px) {
-        :root {
-            --icon-width: 50vw;
-            --icon-height: auto;
-            --row-gap: 20vw;
-            --lineminwidth: none;
-            --valuepadding: 20px;
-            --linewidth: 70vw;
-        }
-    }
+<section class="section-block" aria-labelledby="selected-research-title">
+  <div class="section-heading">
+    <h2 id="selected-research-title">Selected Research</h2>
+    <a class="text-link" href="#" onclick="loadPage('project.html'); return false;">View all research</a>
+  </div>
+  <div class="card-grid">
+    <article class="project-card">
+      <p class="meta">ObsCAL, KAIST &middot; May 2026-Present</p>
+      <h3>VLBI-Assisted Localization of Continuous Gravitational-Wave Sources</h3>
+      <p>
+        Investigating how VLBI astrometric information can improve the localization of continuous gravitational-wave
+        sources with SKAO-era pulsar timing arrays, with the eventual goal of identifying possible host galaxies of
+        supermassive black-hole binaries.
+      </p>
+      <div class="tag-group">
+        <span class="tag">VLBI</span>
+        <span class="tag">Pulsar Timing Arrays</span>
+        <span class="tag">Gravitational Waves</span>
+      </div>
+      <a class="text-link" href="#" onclick="loadPage('project.html', 'vlbi-pta'); return false;">Project details</a>
+    </article>
 
-    @media (max-width: 400px) {
-        :root {
-            --linewidth: 300px;
-        }
-    }
+    <article class="project-card">
+      <p class="meta">ObsCAL, KAIST &middot; Jul. 2024-Aug. 2026</p>
+      <h3>Neural-Surrogate-Guided Asteroid Lightcurve Inversion</h3>
+      <p>
+        Developing a neural-surrogate-guided optimization framework that sequentially modifies a three-dimensional
+        asteroid shape to reproduce multiple observed lightcurves.
+      </p>
+      <div class="tag-group">
+        <span class="tag">Asteroids</span>
+        <span class="tag">Inverse Problems</span>
+        <span class="tag">Optimization</span>
+      </div>
+      <a class="text-link" href="#" onclick="loadPage('project.html', 'asteroid-lightcurve'); return false;">Project details</a>
+    </article>
 
-    /* intro 섹션 스타일 */
-    #introduction {
-        width: 85vw;
-        padding-right: 0px;
-    }
+    <article class="project-card">
+      <p class="meta">KAIST &middot; May 2026-Present</p>
+      <h3>Black-Hole Ray Tracing and VLBI Imaging</h3>
+      <p>
+        Implemented general relativistic ray tracing for black-hole imaging and accretion-disk visualization. The
+        project is being extended toward simulated VLBI imaging.
+      </p>
+      <div class="tag-group">
+        <span class="tag">Black Holes</span>
+        <span class="tag">Ray Tracing</span>
+        <span class="tag">Numerical Simulation</span>
+      </div>
+      <a class="text-link" href="#" onclick="loadPage('project.html', 'black-hole-ray-tracing'); return false;">Project details</a>
+    </article>
+  </div>
+</section>
 
-    .title1 {
-        font-size: 1.9rem;
-        font-weight: bold;
-        font-family: "Trebuchet MS", Dotum, Arial;
-        padding: 5px 10px 10px 10px;
-        margin: 0;
-    }
+<section id="cv" class="section-block" aria-labelledby="cv-title">
+  <div class="section-heading">
+    <h2 id="cv-title">CV Summary</h2>
+    <a class="text-link" href="mailto:crane206265@kaist.ac.kr?subject=CV%20request">Request full CV</a>
+  </div>
 
-    .title2 {
-        font-size: 1.4rem;
-        font-weight: bold;
-        font-family: "Trebuchet MS", Dotum, Arial;
-        padding: 0px 10px 0px 10px;
-        margin: 0;
-    }
+  <div class="split-grid">
+    <article>
+      <h3>Education</h3>
+      <dl class="compact-list">
+        <dt>KAIST</dt>
+        <dd>B.S. in Physics; double major in Computer Science and Mathematical Sciences, 2024-Present</dd>
+      </dl>
+    </article>
 
-    .block1 {
-        display: block;
-        clear: both;
-        padding: 5px 0px 5px 10px;
-        display: flex;
-    }
+    <article>
+      <h3>Current Affiliation</h3>
+      <dl class="compact-list">
+        <dt>Observational Cosmology and Astronomy Lab, KAIST</dt>
+        <dd>Undergraduate research in radio astronomy and computational astrophysics</dd>
+      </dl>
+    </article>
+  </div>
 
-    /* 화면이 좁아지면 세로로 */
-    @media (max-width: 600px) {
-        .block1 {
-            flex-direction: column;
-        }
-    }
+  <article class="subsection">
+    <h3>Current / Recent Activities</h3>
+    <ul class="clean-list">
+      <li>Undergraduate Research Intern, Korea Astronomy &amp; Space Science Institute, Jul.-Aug. 2026</li>
+      <li>Participant and presenter, Summer School on Numerical Relativity and Gravitational Waves, July 2026</li>
+      <li>Participant and presenter, Korea Astronomy Machine Learning Meeting (KAML), March 2026</li>
+    </ul>
+  </article>
 
-    .p1 {
-        font-size: 1.1rem;
-        font-family: "Trebuchet MS", Dotum, Arial;
-        padding: 10px 10px 5px 10px;
-        margin: 0;
-        width: 80%;
-    }
+  <article class="subsection">
+    <h3>Selected Honors</h3>
+    <ul class="clean-list">
+      <li>Korea Presidential Science Scholarship, 2024-Present</li>
+      <li>KAIST Presidential Fellowship, 2024-Present</li>
+      <li>Admission with the Highest Distinction, KAIST, 2024</li>
+      <li>Gold Medal, International Olympiad on Astronomy and Astrophysics, 2023</li>
+      <li>1st Prize, Korea Astronomy Olympiad, 2023</li>
+    </ul>
+  </article>
 
-    #IDPhoto {
-        width: var(--icon-width);
-        height: var(--icon-height);
-        float: left;
-        margin-top: 10px;
-        margin-right: 20px;
-        margin-bottom: 10px;
-        border-radius: 15px;
-    }
+  <article class="subsection">
+    <h3>Technical Skills</h3>
+    <div class="skill-grid">
+      <p><strong>Programming</strong><br>Python, C</p>
+      <p><strong>Scientific Computing</strong><br>Numerical simulation, numerical integration, optimization, deep learning, data visualization</p>
+      <p><strong>Tools</strong><br>Git, Linux / WSL, Jupyter, LaTeX</p>
+      <p><strong>Physics / Astrophysics</strong><br>General relativity, compact objects, radio astronomy, VLBI, pulsar timing arrays, asteroid lightcurve inversion</p>
+    </div>
+  </article>
+</section>
 
-    .icon {
-        vertical-align: middle;   /* 글자 줄과 세로 위치 맞추기 */
-        margin: 2px 3px 5px 3px;        /* 글자와 간격 */
-        width: 20px;              /* 크기 조절 */
-    }
-
-    .info1 {
-        font-family: "Trebuchet MS", Dotum, Arial;
-        font-size: 1.1rem;
-        width: 100%;
-        padding: 5px 10px 5px 10px;
-        margin: 0;
-    }
-
-    .info1 .row{
-        display: grid;
-        grid-template-columns: var(--row-gap) 1fr 2fr;   /* 라벨 140px, 나머지 자동 */
-        column-gap: 16px;
-        align-items: start;
-        margin-bottom: 5px;
-    }
-
-    /* 화면이 좁아지면 한 열로 */
-    @media (max-width: 600px) {
-        .info1 .row {
-            grid-template-columns: 1fr; /* 한 줄 → 세로 배치 */
-        }
-    }
-
-    .info1 .row .label {
-        font-weight: 600;
-        width: var(--row-gap);
-        font-size: 1.15rem;
-    }
-
-    .info1 .row .value1 {
-        flex: 1 1 auto;
-        font-weight: normal;
-        white-space: normal;        /* 공백과 줄바꿈 허용 */
-        overflow-wrap: break-word;  /* 긴 단어 자동 줄바꿈 */
-        word-break: break-word;     /* 표준 */
-        min-width: 300px;               /* flex 안에서 줄바꿈 허용 */
-        max-width: 800px;              /* 너무 길어지는 것 방지 */
-        padding-left: 20px;
-        padding-right: var(--valuepadding);
-    }
-
-    .info1 .row .value2 {
-        flex: 1 1 auto;
-        font-weight: normal;
-        white-space: normal;        /* 공백과 줄바꿈 허용 */
-        overflow-wrap: break-word;  /* 긴 단어 자동 줄바꿈 */
-        word-break: break-word;     /* 표준 */
-        min-width: 0;               /* flex 안에서 줄바꿈 허용 */
-        max-width: 300px;              /* 너무 길어지는 것 방지 */
-        padding-left: 20px;
-    }
-
-    .info1 .row .value {
-        grid-column: 2 / -1; /* 2열부터 끝 열까지 */
-        max-width: 300px;
-    }
-
-    .leftline {
-        width: 70vw;
-        min-width: var(--lineminwidth);
-        height: 1px;
-        margin-left: 0;
-        margin-top: 20px;
-        margin-bottom: 20px;
-        border: none;
-    }
-
-    .topline {
-        width: 85vw;
-        min-width: var(--lineminwidth);
-        height: 2px;
-        margin-left: 0;
-        border: none;
-    }
-
-    @media (max-width: 600px) {
-        .linemaxwidth {
-            width: var(--linewidth);
-        }
-    }
-
-</style>
-
-<!--Test-->
+<section class="section-block" aria-labelledby="contact-title">
+  <h2 id="contact-title">Contact</h2>
+  <div class="contact-grid">
+    <p><strong>Location</strong><br>Daejeon, South Korea</p>
+    <p><strong>GitHub</strong><br><a class="text-link" href="https://github.com/crane206265" target="_blank" rel="noopener noreferrer">github.com/crane206265</a></p>
+    <p><strong>Email</strong><br><a class="text-link" href="mailto:crane206265@kaist.ac.kr">crane206265@kaist.ac.kr</a></p>
+  </div>
+</section>
