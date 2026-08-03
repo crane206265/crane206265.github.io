@@ -1,0 +1,1 @@
+window.MISSING_STAR_RANKING_ENDPOINT = "https://script.google.com/macros/s/AKfycbzlTTg_Zp1HfnfrTqFmH4eeu59QIdA4mIrSX7dybiCpZi6jJs08KLWs2bbH1Y5drdv2_g/exec";

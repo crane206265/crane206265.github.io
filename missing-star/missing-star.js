@@ -21,6 +21,8 @@
   const TOTAL_ANSWER_COUNT = MISSING_COUNT + MESSIER_COUNT + NUMBERED_COUNT + 3;
   const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
   const CHART_BACKGROUND = "#fbfbf7";
+  const RANKING_ENDPOINT = String(window.MISSING_STAR_RANKING_ENDPOINT || "").trim();
+  const LEADERBOARD_LIMIT = 20;
 
   const state = {
     catalog: null,
@@ -31,8 +33,13 @@
     resizeObserver: null,
     showSolution: false,
     revealed: false,
+    usedReveal: false,
     hintLevel: 0,
     countdownTimer: null,
+    startedAt: 0,
+    lastResult: null,
+    leaderboardWeekKey: "",
+    leaderboardLoading: false,
   };
 
   const greekNames = {
@@ -120,6 +127,7 @@
     document.getElementById("missing-star-refresh").addEventListener("click", () => {
       state.showSolution = false;
       state.revealed = false;
+      state.usedReveal = false;
       state.hintLevel = 0;
       generateTodayProblem();
       renderInputs();
@@ -139,6 +147,8 @@
       state.showSolution = !state.showSolution;
       drawChart();
     });
+    document.getElementById("leaderboard-refresh").addEventListener("click", loadLeaderboard);
+    document.getElementById("leaderboard-form").addEventListener("submit", submitLeaderboardScore);
   }
 
   async function loadCatalog() {
@@ -173,6 +183,9 @@
     const observationUtc = dateKeyToUtcDate(dateKey, slotHourUtc);
     const lstHours = utcToLstHours(observationUtc, LONGITUDE_DEG);
     const rotation = rng() * Math.PI * 2;
+    state.startedAt = Date.now();
+    state.lastResult = null;
+    state.usedReveal = false;
 
     const projectedStars = state.catalog.stars
       .map((star) => {
@@ -312,6 +325,7 @@
           checkAnswers();
         }
       });
+      input.addEventListener("input", invalidateLeaderboardScore);
 
       row.append(label, input);
       container.append(row);
@@ -333,6 +347,7 @@
         checkAnswers();
       }
     });
+    input.addEventListener("input", invalidateLeaderboardScore);
     container.append(input);
   }
 
@@ -345,11 +360,17 @@
     document.getElementById("longitude-reference").textContent = `Chart date: ${formatUtcDateTime(problem.observationUtc)}`;
     document.getElementById("longitude-ra-reference").textContent = `Star R RA: ${formatRa(problem.referenceStar.ra)}`;
     document.getElementById("missing-star-solution-toggle").disabled = !state.revealed;
+    state.leaderboardWeekKey = kstWeekKeyFromHourKey(problem.hourKey);
+    document.getElementById("leaderboard-week").textContent = `Week: ${state.leaderboardWeekKey}`;
     updateProgress(0);
+    updateLeaderboardSubmitState();
+    loadLeaderboard();
   }
 
   function checkAnswers() {
     const result = evaluateInputs();
+    state.lastResult = result;
+    updateLeaderboardSubmitState();
     updateProgress(result.correctCount);
 
     result.items.forEach(({ input, status }) => {
@@ -371,7 +392,9 @@
 
   function revealAnswers() {
     state.revealed = true;
+    state.usedReveal = true;
     state.showSolution = true;
+    updateLeaderboardSubmitState();
     document.getElementById("missing-star-solution-toggle").disabled = false;
 
     const inputs = missingAnswerInputs();
@@ -526,6 +549,177 @@
     box.classList.toggle("is-success", mode === "success");
     box.classList.toggle("is-revealed", mode === "revealed");
     box.textContent = message;
+  }
+
+  function invalidateLeaderboardScore(event) {
+    state.lastResult = null;
+    if (event && event.currentTarget) {
+      event.currentTarget.classList.remove("is-correct", "is-close");
+    }
+    updateProgress(0);
+    updateLeaderboardSubmitState();
+  }
+
+  function updateLeaderboardSubmitState() {
+    const submit = document.getElementById("leaderboard-submit");
+    const nameInput = document.getElementById("leaderboard-name");
+    if (!submit || !nameInput) {
+      return;
+    }
+    const canSubmit = Boolean(
+      RANKING_ENDPOINT
+      && state.problem
+      && state.lastResult
+      && !state.usedReveal
+      && !state.leaderboardLoading,
+    );
+    submit.disabled = !canSubmit;
+    nameInput.disabled = !RANKING_ENDPOINT || state.leaderboardLoading;
+  }
+
+  function setLeaderboardStatus(message) {
+    const status = document.getElementById("leaderboard-status");
+    if (status) {
+      status.textContent = message;
+    }
+  }
+
+  function loadLeaderboard() {
+    if (!state.problem) {
+      return;
+    }
+    if (!RANKING_ENDPOINT) {
+      renderLeaderboardRows([]);
+      setLeaderboardStatus("Set MISSING_STAR_RANKING_ENDPOINT in ranking-config.js.");
+      updateLeaderboardSubmitState();
+      return;
+    }
+
+    state.leaderboardLoading = true;
+    updateLeaderboardSubmitState();
+    setLeaderboardStatus("Loading ranking...");
+    jsonpRequest({
+      action: "leaderboard",
+      weekKey: state.leaderboardWeekKey,
+      limit: LEADERBOARD_LIMIT,
+    }).then((data) => {
+      renderLeaderboardRows(Array.isArray(data.rows) ? data.rows : []);
+      setLeaderboardStatus(`Updated ${formatKstClock(new Date())} KST.`);
+    }).catch((error) => {
+      setLeaderboardStatus(`Ranking load failed: ${error.message}`);
+    }).finally(() => {
+      state.leaderboardLoading = false;
+      updateLeaderboardSubmitState();
+    });
+  }
+
+  function submitLeaderboardScore(event) {
+    event.preventDefault();
+    if (!RANKING_ENDPOINT || !state.problem || !state.lastResult || state.usedReveal) {
+      updateLeaderboardSubmitState();
+      return;
+    }
+
+    const nameInput = document.getElementById("leaderboard-name");
+    const player = normalizePlayerName(nameInput.value);
+    if (!player) {
+      setLeaderboardStatus("Enter a name before submitting.");
+      nameInput.focus();
+      return;
+    }
+
+    const payload = {
+      action: "submit",
+      player,
+      weekKey: state.leaderboardWeekKey,
+      hourKey: state.problem.hourKey,
+      seed: state.problem.seed,
+      score: state.lastResult.correctCount,
+      maxScore: TOTAL_ANSWER_COUNT,
+      durationMs: Math.max(0, Date.now() - state.startedAt),
+      revealed: state.usedReveal ? "1" : "0",
+    };
+
+    state.leaderboardLoading = true;
+    updateLeaderboardSubmitState();
+    setLeaderboardStatus("Submitting score...");
+    jsonpRequest(payload).then((data) => {
+      renderLeaderboardRows(Array.isArray(data.rows) ? data.rows : []);
+      setLeaderboardStatus(data.message || "Score submitted.");
+    }).catch((error) => {
+      setLeaderboardStatus(`Score submit failed: ${error.message}`);
+    }).finally(() => {
+      state.leaderboardLoading = false;
+      updateLeaderboardSubmitState();
+    });
+  }
+
+  function renderLeaderboardRows(rows) {
+    const body = document.getElementById("leaderboard-body");
+    if (!body) {
+      return;
+    }
+    if (!RANKING_ENDPOINT) {
+      body.innerHTML = '<tr><td colspan="4">Ranking endpoint is not configured.</td></tr>';
+      return;
+    }
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="4">No scores for this week yet.</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map((row, index) => (
+      `<tr>`
+      + `<td>${index + 1}</td>`
+      + `<td>${escapeHtml(row.player || "")}</td>`
+      + `<td>${Number(row.score || 0)}</td>`
+      + `<td>${Number(row.solved || 0)}</td>`
+      + `</tr>`
+    )).join("");
+  }
+
+  function jsonpRequest(params) {
+    return new Promise((resolve, reject) => {
+      const callbackName = `missingStarRanking_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+      const url = new URL(RANKING_ENDPOINT);
+      Object.entries({ ...params, callback: callbackName }).forEach(([key, value]) => {
+        url.searchParams.set(key, String(value));
+      });
+
+      const script = document.createElement("script");
+      const timeout = window.setTimeout(() => {
+        cleanup();
+        reject(new Error("request timed out"));
+      }, 10000);
+
+      function cleanup() {
+        window.clearTimeout(timeout);
+        delete window[callbackName];
+        script.remove();
+      }
+
+      window[callbackName] = (data) => {
+        cleanup();
+        if (data && data.ok === false) {
+          reject(new Error(data.error || "request failed"));
+          return;
+        }
+        resolve(data || {});
+      };
+
+      script.onerror = () => {
+        cleanup();
+        reject(new Error("network error"));
+      };
+      script.src = url.toString();
+      document.head.append(script);
+    });
+  }
+
+  function normalizePlayerName(value) {
+    return String(value || "")
+      .trim()
+      .replace(/\s+/g, " ")
+      .slice(0, 24);
   }
 
   function updateHints(forceReveal = false) {
@@ -886,6 +1080,18 @@
     return `${kstDateKey(now)}-${hour}`;
   }
 
+  function kstWeekKeyFromHourKey(hourKey) {
+    const [year, month, day] = hourKey.split("-").map(Number);
+    const kstDate = new Date(Date.UTC(year, month - 1, day));
+    const dayOfWeek = kstDate.getUTCDay();
+    const daysFromMonday = (dayOfWeek + 6) % 7;
+    kstDate.setUTCDate(kstDate.getUTCDate() - daysFromMonday);
+    const weekYear = kstDate.getUTCFullYear();
+    const weekMonth = String(kstDate.getUTCMonth() + 1).padStart(2, "0");
+    const weekDay = String(kstDate.getUTCDate()).padStart(2, "0");
+    return `${weekYear}-${weekMonth}-${weekDay}`;
+  }
+
   function formatHourKey(hourKey) {
     const [year, month, day, hour] = hourKey.split("-");
     return `${year}-${month}-${day} ${hour}:00`;
@@ -998,6 +1204,13 @@
     const m = Math.floor((total % 3600) / 60);
     const s = total % 60;
     return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  }
+
+  function formatKstClock(date) {
+    const kst = new Date(date.getTime() + KST_OFFSET_MS);
+    const h = String(kst.getUTCHours()).padStart(2, "0");
+    const m = String(kst.getUTCMinutes()).padStart(2, "0");
+    return `${h}:${m}`;
   }
 
   function parseNumber(value) {
