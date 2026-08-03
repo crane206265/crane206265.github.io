@@ -1,5 +1,10 @@
 (function () {
-  const DATA_URL = "../assets/missing-star/catalog.json";
+  const DATA_VERSION = "20260803-2";
+  const DATA_URLS = [
+    `/assets/missing-star/catalog.json?v=${DATA_VERSION}`,
+    `../assets/missing-star/catalog.json?v=${DATA_VERSION}`,
+    `assets/missing-star/catalog.json?v=${DATA_VERSION}`,
+  ];
   const LATITUDE_DEG = 20.9626;
   const LONGITUDE_DEG = 105.7487;
   const STAR_MAG_LIMIT = 5.0;
@@ -83,24 +88,31 @@
     state.hintLevel = 0;
 
     bindControls();
+    renderStaticInputs();
+    setControlsEnabled(false);
     loadCatalog()
       .then(() => {
         generateTodayProblem();
         renderInputs();
         renderProblemInfo();
         drawChart();
+        setControlsEnabled(true);
         updateFeedback("Bayer 표기, 별 이름, 또는 catalog id를 입력할 수 있습니다.");
         startCountdown();
       })
       .catch((error) => {
-        updateFeedback(`데이터를 불러오지 못했습니다: ${error.message}`);
+        updateFeedback(`데이터를 불러오지 못했습니다: ${error.message}`, "revealed");
       });
 
     if (state.resizeObserver) {
       state.resizeObserver.disconnect();
     }
-    state.resizeObserver = new ResizeObserver(() => drawChart());
-    state.resizeObserver.observe(state.canvas.parentElement);
+    if ("ResizeObserver" in window) {
+      state.resizeObserver = new ResizeObserver(() => drawChart());
+      state.resizeObserver.observe(state.canvas.parentElement);
+    } else {
+      window.addEventListener("resize", drawChart);
+    }
   }
 
   function bindControls() {
@@ -132,12 +144,23 @@
     if (state.catalog) {
       return state.catalog;
     }
-    const response = await fetch(DATA_URL);
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+
+    const errors = [];
+    for (const url of DATA_URLS) {
+      try {
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) {
+          errors.push(`${url}: ${response.status} ${response.statusText}`);
+          continue;
+        }
+        state.catalog = await response.json();
+        return state.catalog;
+      } catch (error) {
+        errors.push(`${url}: ${error.message}`);
+      }
     }
-    state.catalog = await response.json();
-    return state.catalog;
+
+    throw new Error(errors.join(" / "));
   }
 
   function generateTodayProblem() {
@@ -239,6 +262,29 @@
     renderSingleInput("latitude-input", "latitude-answer", "위도 (deg)");
     renderSingleInput("lst-input", "lst-answer", "LST (hours)");
     renderSingleInput("longitude-input", "longitude-answer", "경도 (deg)");
+  }
+
+  function renderStaticInputs() {
+    renderLabeledInputs("missing-star-inputs", MISSING_COUNT, (index) => String(index + 1), "예: α Cyg");
+    renderLabeledInputs("messier-inputs", MESSIER_COUNT, (index) => alphabeticLabel(index), "예: M31");
+    renderLabeledInputs("numbered-star-inputs", NUMBERED_COUNT, (index) => String(index + 1), "예: α Cyg");
+    renderSingleInput("latitude-input", "latitude-answer", "위도 (deg)");
+    renderSingleInput("lst-input", "lst-answer", "LST (hours)");
+    renderSingleInput("longitude-input", "longitude-answer", "경도 (deg)");
+  }
+
+  function setControlsEnabled(enabled) {
+    [
+      "missing-star-check",
+      "missing-star-hint",
+      "missing-star-reveal",
+      "missing-star-refresh",
+    ].forEach((id) => {
+      const control = document.getElementById(id);
+      if (control) {
+        control.disabled = !enabled;
+      }
+    });
   }
 
   function renderLabeledInputs(containerId, count, labelForIndex, placeholder) {
