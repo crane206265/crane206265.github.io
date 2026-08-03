@@ -1,5 +1,5 @@
 (function () {
-  const DATA_VERSION = "20260803-2";
+  const DATA_VERSION = "20260804-2";
   const DATA_URLS = [
     `/assets/missing-star/catalog.json?v=${DATA_VERSION}`,
     `../assets/missing-star/catalog.json?v=${DATA_VERSION}`,
@@ -20,6 +20,7 @@
   const LST_TOLERANCE_HOURS = 0.25;
   const TOTAL_ANSWER_COUNT = MISSING_COUNT + MESSIER_COUNT + NUMBERED_COUNT + 3;
   const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+  const CHART_BACKGROUND = "#fbfbf7";
 
   const state = {
     catalog: null,
@@ -164,8 +165,9 @@
   }
 
   function generateTodayProblem() {
-    const dateKey = kstDateKey();
-    const seed = fnv1a(`missing-star:${dateKey}`);
+    const hourKey = kstHourKey();
+    const dateKey = hourKey.slice(0, 10);
+    const seed = fnv1a(`missing-star:${hourKey}`);
     const rng = mulberry32(seed);
     const slotHourUtc = 12 + Math.floor(rng() * 4);
     const observationUtc = dateKeyToUtcDate(dateKey, slotHourUtc);
@@ -240,6 +242,7 @@
 
     state.problem = {
       dateKey,
+      hourKey,
       seed,
       observationUtc,
       lstHours,
@@ -335,7 +338,7 @@
 
   function renderProblemInfo() {
     const problem = state.problem;
-    document.getElementById("missing-star-date").textContent = `KST ${problem.dateKey}`;
+    document.getElementById("missing-star-date").textContent = `KST ${formatHourKey(problem.hourKey)}`;
     document.getElementById("missing-star-seed").textContent = `seed ${problem.seed}`;
     document.getElementById("missing-star-chart-date").textContent = `Chart date ${formatUtcDateTime(problem.observationUtc)}`;
     document.getElementById("lst-reference").textContent = `Star R RA: ${formatRa(problem.referenceStar.ra)}`;
@@ -619,7 +622,7 @@
     const radius = size * 0.44;
 
     ctx.clearRect(0, 0, size, size);
-    ctx.fillStyle = "#fbfbf7";
+    ctx.fillStyle = CHART_BACKGROUND;
     ctx.fillRect(0, 0, size, size);
 
     drawGrid(ctx, cx, cy, radius);
@@ -877,6 +880,17 @@
     return `${year}-${month}-${day}`;
   }
 
+  function kstHourKey(now = new Date()) {
+    const kst = new Date(now.getTime() + KST_OFFSET_MS);
+    const hour = String(kst.getUTCHours()).padStart(2, "0");
+    return `${kstDateKey(now)}-${hour}`;
+  }
+
+  function formatHourKey(hourKey) {
+    const [year, month, day, hour] = hourKey.split("-");
+    return `${year}-${month}-${day} ${hour}:00`;
+  }
+
   function startCountdown() {
     if (state.countdownTimer) {
       clearInterval(state.countdownTimer);
@@ -890,19 +904,19 @@
 
       const now = new Date();
       const kst = new Date(now.getTime() + KST_OFFSET_MS);
-      const nextKstMidnightUtcMs = Date.UTC(
+      const nextKstHourUtcMs = Date.UTC(
         kst.getUTCFullYear(),
         kst.getUTCMonth(),
-        kst.getUTCDate() + 1,
-        0,
+        kst.getUTCDate(),
+        kst.getUTCHours() + 1,
         0,
         0,
       ) - KST_OFFSET_MS;
-      const remaining = Math.max(0, nextKstMidnightUtcMs - now.getTime());
+      const remaining = Math.max(0, nextKstHourUtcMs - now.getTime());
       document.getElementById("missing-star-countdown").textContent = formatDuration(remaining);
 
-      const currentKey = kstDateKey(now);
-      if (state.problem && currentKey !== state.problem.dateKey) {
+      const currentKey = kstHourKey(now);
+      if (state.problem && currentKey !== state.problem.hourKey) {
         state.showSolution = false;
         state.revealed = false;
         state.hintLevel = 0;

@@ -121,7 +121,11 @@ h1 {
 }
 
 .chart-panel {
+  position: sticky;
+  top: 18px;
+  max-height: calc(100vh - 36px);
   overflow: hidden;
+  background: var(--chart-paper);
 }
 
 .chart-toolbar {
@@ -174,8 +178,9 @@ h1 {
 }
 
 .chart-canvas-wrap {
-  width: 100%;
+  width: min(100%, calc(100vh - 94px));
   aspect-ratio: 1 / 1;
+  margin-inline: auto;
   background: var(--chart-paper);
 }
 
@@ -373,9 +378,33 @@ h1 {
   color: var(--text);
 }
 
+.app-footer {
+  width: min(100% - 48px, var(--page-max));
+  margin: -28px auto 42px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.app-footer p {
+  margin-bottom: 5px;
+}
+
 @media (max-width: 1040px) {
   .missing-star-page {
     grid-template-columns: 1fr;
+  }
+
+  .chart-panel {
+    position: static;
+    max-height: none;
+  }
+
+  .chart-canvas-wrap {
+    width: 100%;
+    max-height: none;
   }
 
   .answer-panel {
@@ -401,6 +430,11 @@ h1 {
 
   .missing-star-page {
     width: min(100% - 28px, var(--page-max));
+  }
+
+  .app-footer {
+    width: min(100% - 28px, var(--page-max));
+    margin-top: -24px;
   }
 }
 
