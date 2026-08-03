@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="KST 자정마다 날짜 seed로 갱신되는 Missing Star 천문 성도 문제.">
+  <link rel="stylesheet" href="missing-star.css">
+  <title>Missing Star</title>
+</head>
+
+<body>
+  <header class="app-header">
+    <span class="home-link">Hakjin Lee</span>
+    <div>
+      <p class="eyebrow">Daily Astronomy Practice</p>
+      <h1>Missing Star</h1>
+    </div>
+    <div class="missing-star-date" aria-live="polite">
+      <span id="missing-star-date">Loading</span>
+      <span id="missing-star-countdown">--:--:--</span>
+    </div>
+  </header>
+
+  <main id="missing-star-root" class="missing-star-page" aria-labelledby="missing-star-title">
+    <h2 id="missing-star-title" class="visually-hidden">Missing Star daily problem</h2>
+
+    <section class="chart-panel" aria-label="Generated star chart">
+      <div class="chart-toolbar">
+        <div>
+          <span class="chart-meta" id="missing-star-seed">Seed</span>
+          <span class="chart-meta" id="missing-star-chart-date">Chart date</span>
+        </div>
+        <div class="chart-actions">
+          <button class="icon-button" id="missing-star-refresh" type="button" title="오늘 문제 다시 그리기" aria-label="오늘 문제 다시 그리기">↻</button>
+          <button class="icon-button" id="missing-star-solution-toggle" type="button" title="정답 성도 보기" aria-label="정답 성도 보기" disabled>◎</button>
+        </div>
+      </div>
+      <div class="chart-canvas-wrap">
+        <canvas id="missing-star-canvas" width="960" height="960" aria-label="Daily missing star chart"></canvas>
+      </div>
+    </section>
+
+    <section class="answer-panel" aria-label="Answer panel">
+      <div class="panel-header">
+        <h2>Problems</h2>
+        <span id="missing-star-progress">0 / 12</span>
+      </div>
+
+      <div class="problem-stack">
+        <section class="problem-group" aria-labelledby="problem-1-title">
+          <h3 id="problem-1-title">Problem 1 : Missing Star</h3>
+          <div id="missing-star-inputs" class="answer-list"></div>
+        </section>
+
+        <section class="problem-group" aria-labelledby="problem-2-title">
+          <h3 id="problem-2-title">Problem 2 : Messier</h3>
+          <div id="messier-inputs" class="answer-list"></div>
+        </section>
+
+        <section class="problem-group" aria-labelledby="problem-3-title">
+          <h3 id="problem-3-title">Problem 3 : Latitude</h3>
+          <div id="latitude-input" class="single-answer"></div>
+        </section>
+
+        <section class="problem-group" aria-labelledby="problem-4-title">
+          <h3 id="problem-4-title">Problem 4 : LST</h3>
+          <p class="inline-data" id="lst-reference">Reference RA: --</p>
+          <div id="lst-input" class="single-answer"></div>
+        </section>
+
+        <section class="problem-group" aria-labelledby="problem-5-title">
+          <h3 id="problem-5-title">Problem 5 : Longitude</h3>
+          <p class="inline-data" id="longitude-reference">Chart date: --</p>
+          <p class="inline-data" id="longitude-ra-reference">Star R RA: --</p>
+          <div id="longitude-input" class="single-answer"></div>
+        </section>
+      </div>
+
+      <div class="answer-actions">
+        <button class="button primary-button" id="missing-star-check" type="button">Check</button>
+        <button class="button" id="missing-star-hint" type="button">Hint</button>
+        <button class="button" id="missing-star-reveal" type="button">Reveal</button>
+      </div>
+
+      <div id="missing-star-feedback" class="feedback-box" aria-live="polite"></div>
+      <div id="missing-star-hints" class="hint-list" hidden></div>
+    </section>
+  </main>
+
+  <script src="missing-star.js"></script>
+</body>
+
+</html>
