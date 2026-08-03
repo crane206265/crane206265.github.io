@@ -8,7 +8,7 @@ This ranking backend uses Google Sheets plus Google Apps Script.
 2. Open `Extensions > Apps Script`.
 3. Paste the contents of `missing-star/ranking-apps-script.js`.
 4. Save the Apps Script project.
-5. Deploy as a web app.
+5. Deploy as a web app. When updating this backend later, use `Manage deployments > Edit > New version`.
 6. Set access to `Anyone`.
 7. Copy the `/exec` web app URL.
 

@@ -1,4 +1,5 @@
 const SHEET_NAME = "submissions";
+const TIME_ZONE = "Asia/Seoul";
 const HEADERS = [
   "created_at",
   "player",
@@ -50,8 +51,8 @@ function submitScore(params) {
   getSheet().appendRow([
     new Date(),
     player,
-    weekKey,
-    hourKey,
+    "'" + weekKey,
+    "'" + hourKey,
     seed,
     score,
     maxScore,
@@ -82,7 +83,7 @@ function getLeaderboard(weekKey, limitValue) {
   const byPlayer = {};
 
   values.slice(1).forEach((row) => {
-    if (String(row[index.week_key] || "") !== key) {
+    if (storedKey(row[index.week_key]) !== key) {
       return;
     }
     if (row[index.revealed] === true || String(row[index.revealed]).toLowerCase() === "true") {
@@ -90,7 +91,7 @@ function getLeaderboard(weekKey, limitValue) {
     }
 
     const player = cleanPlayerName(row[index.player]);
-    const hourKey = cleanKey(row[index.hour_key]);
+    const hourKey = storedKey(row[index.hour_key]);
     const score = clampNumber(row[index.score], 0, 100);
     const durationMs = clampNumber(row[index.duration_ms], 0, 24 * 60 * 60 * 1000);
     if (!player || !hourKey) {
@@ -137,6 +138,7 @@ function getSheet() {
     sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
     sheet.setFrozenRows(1);
   }
+  sheet.getRange("C:D").setNumberFormat("@");
   return sheet;
 }
 
@@ -174,8 +176,16 @@ function cleanPlayerName(value) {
 function cleanKey(value) {
   return String(value || "")
     .trim()
+    .replace(/^'/, "")
     .replace(/[^0-9A-Za-z_-]/g, "")
     .slice(0, 32);
+}
+
+function storedKey(value) {
+  if (Object.prototype.toString.call(value) === "[object Date]" && !Number.isNaN(value.getTime())) {
+    return Utilities.formatDate(value, TIME_ZONE, "yyyy-MM-dd");
+  }
+  return cleanKey(value);
 }
 
 function clampNumber(value, min, max) {
