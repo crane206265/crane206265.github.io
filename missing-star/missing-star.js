@@ -7,12 +7,13 @@
   const MISSING_MAG_LIMIT = 2.6;
   const NUMBERED_COUNT = 4;
   const NUMBERED_MAG_LIMIT = 2.6;
+  const MIRROR_HORIZONTAL = true;
   const MIN_ALTITUDE_DEG = 10.0;
   const MESSIER_COUNT = 4;
   const LATITUDE_TOLERANCE_DEG = 3.0;
   const LONGITUDE_TOLERANCE_DEG = 3.0;
   const LST_TOLERANCE_HOURS = 0.25;
-  const TOTAL_ANSWER_COUNT = MISSING_COUNT + MESSIER_COUNT + 3;
+  const TOTAL_ANSWER_COUNT = MISSING_COUNT + MESSIER_COUNT + NUMBERED_COUNT + 3;
   const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
 
   const state = {
@@ -189,9 +190,15 @@
       star.mag <= NUMBERED_MAG_LIMIT
       && star.altDeg >= MIN_ALTITUDE_DEG
       && !missingIds.has(star.id)
+      && star.id !== referenceStar.id
+      && state.catalog.bayer[star.id]
     ));
     const numberedStars = pickMany(numberedCandidates, NUMBERED_COUNT, rng)
-      .map((star, index) => ({ ...star, label: String(index + 1) }));
+      .map((star, index) => ({
+        ...star,
+        label: String(index + 1),
+        info: state.catalog.bayer[star.id],
+      }));
 
     const messierObjects = state.catalog.messier
       .map((object) => {
@@ -228,6 +235,7 @@
   function renderInputs() {
     renderLabeledInputs("missing-star-inputs", MISSING_COUNT, (index) => String(index + 1), "예: α Cyg");
     renderLabeledInputs("messier-inputs", state.problem.messierObjects.length, (index) => alphabeticLabel(index), "예: M31");
+    renderLabeledInputs("numbered-star-inputs", state.problem.numberedStars.length, (index) => String(index + 1), "예: α Cyg");
     renderSingleInput("latitude-input", "latitude-answer", "위도 (deg)");
     renderSingleInput("lst-input", "lst-answer", "LST (hours)");
     renderSingleInput("longitude-input", "longitude-answer", "경도 (deg)");
@@ -329,6 +337,12 @@
       input.classList.add("is-correct");
     });
 
+    numberedAnswerInputs().forEach((input, index) => {
+      const star = state.problem.numberedStars[index];
+      input.value = star.info.bayerUnicode || star.info.bayerLatex || star.id;
+      input.classList.add("is-correct");
+    });
+
     document.getElementById("latitude-answer").value = LATITUDE_DEG.toFixed(2);
     document.getElementById("lst-answer").value = state.problem.lstHours.toFixed(2);
     document.getElementById("longitude-answer").value = LONGITUDE_DEG.toFixed(2);
@@ -363,6 +377,13 @@
       const object = state.problem.messierObjects[index];
       const value = normalizeAnswer(input.value);
       const correct = Boolean(value) && messierAliases(object).some((alias) => normalizeAnswer(alias) === value);
+      items.push({ input, status: correct ? "correct" : "wrong" });
+    });
+
+    numberedAnswerInputs().forEach((input, index) => {
+      const star = state.problem.numberedStars[index];
+      const value = normalizeAnswer(input.value);
+      const correct = Boolean(value) && answerAliases(star).some((alias) => normalizeAnswer(alias) === value);
       items.push({ input, status: correct ? "correct" : "wrong" });
     });
 
@@ -491,6 +512,13 @@
       return `<div class="hint-item"><strong>${object.label}</strong><span>${escapeHtml(answer)}</span></div>`;
     }).join("");
 
+    const numberedHintHtml = state.problem.numberedStars.map((star) => {
+      const answer = level >= 3
+        ? `${star.info.nameKo} · ${star.info.bayerUnicode}`
+        : `Vmag ${star.mag.toFixed(2)}, ${azimuthName(star.azDeg)}`;
+      return `<div class="hint-item"><strong>Number ${star.label}</strong><span>${escapeHtml(answer)}</span></div>`;
+    }).join("");
+
     const numericHintHtml = level >= 3
       ? [
         `<div class="hint-item"><strong>Latitude</strong><span>${LATITUDE_DEG.toFixed(2)} deg</span></div>`,
@@ -503,7 +531,7 @@
         `<div class="hint-item"><strong>Longitude</strong><span>Use the chart date and your estimated LST.</span></div>`,
       ].join("");
 
-    hints.innerHTML = missingHintHtml + messierHintHtml + numericHintHtml;
+    hints.innerHTML = missingHintHtml + messierHintHtml + numberedHintHtml + numericHintHtml;
   }
 
   function missingAnswerInputs() {
@@ -512,6 +540,10 @@
 
   function messierAnswerInputs() {
     return Array.from(document.querySelectorAll("#messier-inputs input"));
+  }
+
+  function numberedAnswerInputs() {
+    return Array.from(document.querySelectorAll("#numbered-star-inputs input"));
   }
 
   function numericInputs() {
@@ -670,8 +702,9 @@
     ctx.font = "700 13px Trebuchet MS, Segoe UI, Arial, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    [["N", 0], ["E", Math.PI / 2], ["S", Math.PI], ["W", Math.PI * 1.5]].forEach(([label, angle]) => {
-      ctx.fillText(label, cx + (radius + 20) * Math.sin(angle), cy - (radius + 20) * Math.cos(angle));
+    [["N", 0], ["E", 90], ["S", 180], ["W", 270]].forEach(([label, physicalAzDeg]) => {
+      const displayAz = degToRad(physicalAzDeg) + state.problem.rotation;
+      ctx.fillText(label, cx + horizontalMirrorSign() * (radius + 20) * Math.sin(displayAz), cy - (radius + 20) * Math.cos(displayAz));
     });
     ctx.restore();
   }
@@ -717,9 +750,13 @@
   function project(object, cx, cy, radius) {
     const r = projectionRadius(degToRad(object.altDeg));
     return {
-      x: cx + radius * r * Math.sin(degToRad(object.azDeg)),
+      x: cx + horizontalMirrorSign() * radius * r * Math.sin(degToRad(object.azDeg)),
       y: cy - radius * r * Math.cos(degToRad(object.azDeg)),
     };
+  }
+
+  function horizontalMirrorSign() {
+    return MIRROR_HORIZONTAL ? -1 : 1;
   }
 
   function canvasStarRadius(magnitude) {
