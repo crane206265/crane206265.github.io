@@ -5,11 +5,11 @@
     `../assets/missing-star/catalog.json?v=${DATA_VERSION}`,
     `assets/missing-star/catalog.json?v=${DATA_VERSION}`,
   ];
-  const LATITUDE_DEG = 20.9626;
-  const LONGITUDE_DEG = 105.7487;
+  const LATITUDE_RANGE_DEG = [-40, 40];
+  const LONGITUDE_RANGE_DEG = [-180, 180];
   const STAR_MAG_LIMIT = 5.0;
   const MISSING_COUNT = 5;
-  const MISSING_MAG_LIMIT = 2.6;
+  const MISSING_MAG_LIMIT = 2.7;
   const NUMBERED_COUNT = 4;
   const NUMBERED_MAG_LIMIT = 2.6;
   const MIRROR_HORIZONTAL = true;
@@ -19,7 +19,49 @@
   const LONGITUDE_TOLERANCE_DEG = 3.0;
   const LST_TOLERANCE_HOURS = 0.25;
   const TOTAL_ANSWER_COUNT = MISSING_COUNT + MESSIER_COUNT + NUMBERED_COUNT + 3;
+  const SCORE_POINTS = {
+    missing: 2,
+    messier: 1,
+    numbered: 1,
+    latitude: 2,
+    lst: 3,
+    longitude: 2,
+  };
+  const MAX_SCORE = (
+    MISSING_COUNT * SCORE_POINTS.missing
+    + MESSIER_COUNT * SCORE_POINTS.messier
+    + NUMBERED_COUNT * SCORE_POINTS.numbered
+    + SCORE_POINTS.latitude
+    + SCORE_POINTS.lst
+    + SCORE_POINTS.longitude
+  );
+  const EXCLUDED_MESSIER_IDS = new Set([
+    "M22",
+    "M28",
+    "M49",
+    "M54",
+    "M55",
+    "M58",
+    "M59",
+    "M60",
+    "M61",
+    "M69",
+    "M70",
+    "M75",
+    "M84",
+    "M85",
+    "M86",
+    "M87",
+    "M88",
+    "M89",
+    "M90",
+    "M91",
+    "M98",
+    "M99",
+    "M100",
+  ]);
   const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+  const KST_SLOT_HOURS = 6;
   const CHART_BACKGROUND = "#fbfbf7";
   const RANKING_ENDPOINT = String(window.MISSING_STAR_RANKING_ENDPOINT || "").trim();
   const LEADERBOARD_LIMIT = 20;
@@ -179,9 +221,11 @@
     const dateKey = hourKey.slice(0, 10);
     const seed = fnv1a(`missing-star:${hourKey}`);
     const rng = mulberry32(seed);
+    const latitudeDeg = randomBetween(rng, LATITUDE_RANGE_DEG[0], LATITUDE_RANGE_DEG[1]);
+    const longitudeDeg = randomBetween(rng, LONGITUDE_RANGE_DEG[0], LONGITUDE_RANGE_DEG[1]);
     const slotHourUtc = 12 + Math.floor(rng() * 4);
     const observationUtc = dateKeyToUtcDate(dateKey, slotHourUtc);
-    const lstHours = utcToLstHours(observationUtc, LONGITUDE_DEG);
+    const lstHours = utcToLstHours(observationUtc, longitudeDeg);
     const rotation = rng() * Math.PI * 2;
     state.startedAt = Date.now();
     state.lastResult = null;
@@ -192,7 +236,7 @@
         const horizontal = horizontalCoordinates(
           star.ra,
           star.dec,
-          LATITUDE_DEG,
+          latitudeDeg,
           lstHours,
           rotation,
         );
@@ -243,13 +287,16 @@
         const horizontal = horizontalCoordinates(
           object.ra,
           object.dec,
-          LATITUDE_DEG,
+          latitudeDeg,
           lstHours,
           rotation,
         );
         return { ...object, ...horizontal };
       })
-      .filter((object) => object.altDeg >= MIN_ALTITUDE_DEG);
+      .filter((object) => (
+        object.altDeg >= MIN_ALTITUDE_DEG
+        && !EXCLUDED_MESSIER_IDS.has(object.id)
+      ));
     const selectedMessier = pickMany(messierObjects, MESSIER_COUNT, rng)
       .map((object, index) => ({ ...object, label: alphabeticLabel(index) }));
 
@@ -257,6 +304,8 @@
       dateKey,
       hourKey,
       seed,
+      latitudeDeg,
+      longitudeDeg,
       observationUtc,
       lstHours,
       rotation,
@@ -371,7 +420,7 @@
     const result = evaluateInputs();
     state.lastResult = result;
     updateLeaderboardSubmitState();
-    updateProgress(result.correctCount);
+    updateProgress(result.score);
 
     result.items.forEach(({ input, status }) => {
       input.classList.toggle("is-correct", status === "correct");
@@ -387,7 +436,7 @@
       return;
     }
 
-    updateFeedback(`${result.correctCount} / ${TOTAL_ANSWER_COUNT}개를 맞혔습니다.`);
+    updateFeedback(`${result.score} / ${MAX_SCORE} points - ${result.correctCount} / ${TOTAL_ANSWER_COUNT} correct`);
   }
 
   function revealAnswers() {
@@ -415,12 +464,12 @@
       input.classList.add("is-correct");
     });
 
-    document.getElementById("latitude-answer").value = LATITUDE_DEG.toFixed(2);
+    document.getElementById("latitude-answer").value = state.problem.latitudeDeg.toFixed(2);
     document.getElementById("lst-answer").value = state.problem.lstHours.toFixed(2);
-    document.getElementById("longitude-answer").value = LONGITUDE_DEG.toFixed(2);
+    document.getElementById("longitude-answer").value = state.problem.longitudeDeg.toFixed(2);
     numericInputs().forEach((input) => input.classList.add("is-correct"));
 
-    updateProgress(TOTAL_ANSWER_COUNT);
+    updateProgress(MAX_SCORE);
     drawChart();
     updateHints(true);
     updateFeedback("정답을 표시했습니다.", "revealed");
@@ -433,48 +482,53 @@
       missingAnswerInputs(),
       state.problem.missingStars,
       answerAliases,
+      SCORE_POINTS.missing,
     ));
 
     messierAnswerInputs().forEach((input, index) => {
       const object = state.problem.messierObjects[index];
       const value = normalizeAnswer(input.value);
       const correct = Boolean(value) && messierAliases(object).some((alias) => normalizeAnswer(alias) === value);
-      items.push({ input, status: correct ? "correct" : "wrong" });
+      items.push({ input, status: correct ? "correct" : "wrong", points: SCORE_POINTS.messier });
     });
 
     numberedAnswerInputs().forEach((input, index) => {
       const star = state.problem.numberedStars[index];
       const value = normalizeAnswer(input.value);
       const correct = Boolean(value) && answerAliases(star).some((alias) => normalizeAnswer(alias) === value);
-      items.push({ input, status: correct ? "correct" : "wrong" });
+      items.push({ input, status: correct ? "correct" : "wrong", points: SCORE_POINTS.numbered });
     });
 
     items.push(evaluateNumericInput(
       document.getElementById("latitude-answer"),
-      LATITUDE_DEG,
+      state.problem.latitudeDeg,
       LATITUDE_TOLERANCE_DEG,
       "linear",
+      SCORE_POINTS.latitude,
     ));
     items.push(evaluateNumericInput(
       document.getElementById("lst-answer"),
       state.problem.lstHours,
       LST_TOLERANCE_HOURS,
       "hours",
+      SCORE_POINTS.lst,
     ));
     items.push(evaluateNumericInput(
       document.getElementById("longitude-answer"),
-      LONGITUDE_DEG,
+      state.problem.longitudeDeg,
       LONGITUDE_TOLERANCE_DEG,
       "longitude",
+      SCORE_POINTS.longitude,
     ));
 
     return {
       correctCount: items.filter((item) => item.status === "correct").length,
+      score: items.reduce((total, item) => total + (item.status === "correct" ? item.points : 0), 0),
       items,
     };
   }
 
-  function evaluateOrderIndependentAnswers(inputs, targets, aliasesForTarget) {
+  function evaluateOrderIndependentAnswers(inputs, targets, aliasesForTarget, points) {
     const matchedIds = new Set();
     return inputs.map((input) => {
       const value = normalizeAnswer(input.value);
@@ -488,7 +542,7 @@
       if (matched) {
         matchedIds.add(matched.id);
       }
-      return { input, status: matched ? "correct" : "wrong" };
+      return { input, status: matched ? "correct" : "wrong", points };
     });
   }
 
@@ -510,12 +564,12 @@
     ].filter(Boolean);
   }
 
-  function evaluateNumericInput(input, expected, tolerance, mode) {
+  function evaluateNumericInput(input, expected, tolerance, mode, points) {
     const parsed = mode === "hours"
       ? parseHours(input.value)
       : parseSignedAngle(input.value, mode === "longitude" ? "longitude" : "latitude");
     if (!Number.isFinite(parsed)) {
-      return { input, status: "wrong" };
+      return { input, status: "wrong", points };
     }
 
     let error = Math.abs(parsed - expected);
@@ -528,6 +582,7 @@
     return {
       input,
       status: error <= tolerance ? "correct" : "wrong",
+      points,
     };
   }
 
@@ -548,8 +603,8 @@
     return text;
   }
 
-  function updateProgress(correctCount) {
-    document.getElementById("missing-star-progress").textContent = `${correctCount} / ${TOTAL_ANSWER_COUNT}`;
+  function updateProgress(score) {
+    document.getElementById("missing-star-progress").textContent = `${score} / ${MAX_SCORE}`;
   }
 
   function updateFeedback(message, mode) {
@@ -642,8 +697,8 @@
       weekKey: state.leaderboardWeekKey,
       hourKey: state.problem.hourKey,
       seed: state.problem.seed,
-      score: state.lastResult.correctCount,
-      maxScore: TOTAL_ANSWER_COUNT,
+      score: state.lastResult.score,
+      maxScore: MAX_SCORE,
       durationMs: Math.max(0, Date.now() - state.startedAt),
       revealed: state.usedReveal ? "1" : "0",
     };
@@ -680,7 +735,7 @@
       + `<td>${index + 1}</td>`
       + `<td>${escapeHtml(row.player || "")}</td>`
       + `<td>${Number(row.score || 0)}</td>`
-      + `<td>${Number(row.solved || 0)}</td>`
+      + `<td>${Number(row.attempts || 0)}</td>`
       + `</tr>`
     )).join("");
   }
@@ -772,9 +827,9 @@
 
     const numericHintHtml = level >= 3
       ? [
-        `<div class="hint-item"><strong>Latitude</strong><span>${LATITUDE_DEG.toFixed(2)} deg</span></div>`,
+        `<div class="hint-item"><strong>Latitude</strong><span>${state.problem.latitudeDeg.toFixed(2)} deg</span></div>`,
         `<div class="hint-item"><strong>LST</strong><span>${formatHours(state.problem.lstHours)}</span></div>`,
-        `<div class="hint-item"><strong>Longitude</strong><span>${LONGITUDE_DEG.toFixed(2)} deg</span></div>`,
+        `<div class="hint-item"><strong>Longitude</strong><span>${state.problem.longitudeDeg.toFixed(2)} deg</span></div>`,
       ].join("")
       : [
         `<div class="hint-item"><strong>Latitude</strong><span>Use the altitude pattern around the pole and horizon.</span></div>`,
@@ -1096,7 +1151,8 @@
 
   function kstHourKey(now = new Date()) {
     const kst = new Date(now.getTime() + KST_OFFSET_MS);
-    const hour = String(kst.getUTCHours()).padStart(2, "0");
+    const slotHour = Math.floor(kst.getUTCHours() / KST_SLOT_HOURS) * KST_SLOT_HOURS;
+    const hour = String(slotHour).padStart(2, "0");
     return `${kstDateKey(now)}-${hour}`;
   }
 
@@ -1130,15 +1186,16 @@
 
       const now = new Date();
       const kst = new Date(now.getTime() + KST_OFFSET_MS);
-      const nextKstHourUtcMs = Date.UTC(
+      const nextSlotHour = Math.floor(kst.getUTCHours() / KST_SLOT_HOURS) * KST_SLOT_HOURS + KST_SLOT_HOURS;
+      const nextKstSlotUtcMs = Date.UTC(
         kst.getUTCFullYear(),
         kst.getUTCMonth(),
         kst.getUTCDate(),
-        kst.getUTCHours() + 1,
+        nextSlotHour,
         0,
         0,
       ) - KST_OFFSET_MS;
-      const remaining = Math.max(0, nextKstHourUtcMs - now.getTime());
+      const remaining = Math.max(0, nextKstSlotUtcMs - now.getTime());
       document.getElementById("missing-star-countdown").textContent = formatDuration(remaining);
 
       const currentKey = kstHourKey(now);
@@ -1168,6 +1225,10 @@
       picked.push(pool.splice(index, 1)[0]);
     }
     return picked;
+  }
+
+  function randomBetween(rng, min, max) {
+    return min + (max - min) * rng();
   }
 
   function labelOffset(index) {

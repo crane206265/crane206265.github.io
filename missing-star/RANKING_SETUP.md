@@ -1,4 +1,4 @@
-# Hourly Missing Star Ranking Setup
+# Missing Star Ranking Setup
 
 This ranking backend uses Google Sheets plus Google Apps Script.
 
@@ -26,7 +26,15 @@ Commit and push that file.
 
 ## Scoring
 
-- One hourly problem is worth up to 16 points.
+- One six-hour problem is worth up to 25 points.
+- Problem 1 is worth 2 points per answer.
+- Problem 2 is worth 1 point per answer.
+- Problem 3 is worth 1 point per answer.
+- Problem 4 is worth 2 points.
+- Problem 5 is worth 3 points.
+- Problem 6 is worth 2 points.
 - Weekly ranking is grouped by the KST Monday start date.
-- If the same player submits the same hour more than once, only that player's best score for that hour is counted.
+- Ranking uses each player's best single score for the week.
 - Scores submitted after pressing `Reveal` are not accepted by the website UI and are ignored by the backend when `revealed=true`.
+
+When changing scoring rules, delete the old submission rows from Google Sheets or start a new `submissions` sheet so old scores do not mix with new scores.

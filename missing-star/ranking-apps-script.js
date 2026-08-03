@@ -35,7 +35,7 @@ function submitScore(params) {
   const player = cleanPlayerName(params.player);
   const weekKey = cleanKey(params.weekKey);
   const hourKey = cleanKey(params.hourKey);
-  const score = clampNumber(params.score, 0, Number(params.maxScore || 16));
+  const score = clampNumber(params.score, 0, Number(params.maxScore || 25));
   const maxScore = clampNumber(params.maxScore, 1, 100);
   const durationMs = clampNumber(params.durationMs, 0, 24 * 60 * 60 * 1000);
   const seed = String(params.seed || "").replace(/[^0-9]/g, "").slice(0, 20);
@@ -99,31 +99,35 @@ function getLeaderboard(weekKey, limitValue) {
     }
 
     if (!byPlayer[player]) {
-      byPlayer[player] = { player: player, hours: {} };
+      byPlayer[player] = { player: player, attempts: {}, best: null };
     }
-    const previous = byPlayer[player].hours[hourKey];
-    if (!previous || score > previous.score || (score === previous.score && durationMs < previous.durationMs)) {
-      byPlayer[player].hours[hourKey] = { score: score, durationMs: durationMs };
+    byPlayer[player].attempts[hourKey] = true;
+    if (
+      !byPlayer[player].best
+      || score > byPlayer[player].best.score
+      || (score === byPlayer[player].best.score && durationMs < byPlayer[player].best.durationMs)
+    ) {
+      byPlayer[player].best = { score: score, durationMs: durationMs };
     }
   });
 
   return Object.keys(byPlayer).map((player) => {
-    const hours = Object.values(byPlayer[player].hours);
+    const best = byPlayer[player].best || { score: 0, durationMs: 0 };
     return {
       player: player,
-      score: hours.reduce((total, item) => total + item.score, 0),
-      solved: hours.length,
-      durationMs: hours.reduce((total, item) => total + item.durationMs, 0),
+      score: best.score,
+      attempts: Object.keys(byPlayer[player].attempts).length,
+      durationMs: best.durationMs,
     };
   }).sort((a, b) => (
     b.score - a.score
-    || b.solved - a.solved
     || a.durationMs - b.durationMs
+    || b.attempts - a.attempts
     || a.player.localeCompare(b.player)
   )).slice(0, limit).map((row) => ({
     player: row.player,
     score: row.score,
-    solved: row.solved,
+    attempts: row.attempts,
   }));
 }
 
