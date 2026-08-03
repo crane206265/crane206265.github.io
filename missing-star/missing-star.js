@@ -427,23 +427,13 @@
   }
 
   function evaluateInputs() {
-    const matchedIds = new Set();
     const items = [];
 
-    missingAnswerInputs().forEach((input) => {
-      const value = normalizeAnswer(input.value);
-      let matched = null;
-      if (value) {
-        matched = state.problem.missingStars.find((star) => (
-          !matchedIds.has(star.id)
-          && answerAliases(star).some((alias) => normalizeAnswer(alias) === value)
-        ));
-      }
-      if (matched) {
-        matchedIds.add(matched.id);
-      }
-      items.push({ input, status: matched ? "correct" : "wrong" });
-    });
+    items.push(...evaluateOrderIndependentAnswers(
+      missingAnswerInputs(),
+      state.problem.missingStars,
+      answerAliases,
+    ));
 
     messierAnswerInputs().forEach((input, index) => {
       const object = state.problem.messierObjects[index];
@@ -482,6 +472,24 @@
       correctCount: items.filter((item) => item.status === "correct").length,
       items,
     };
+  }
+
+  function evaluateOrderIndependentAnswers(inputs, targets, aliasesForTarget) {
+    const matchedIds = new Set();
+    return inputs.map((input) => {
+      const value = normalizeAnswer(input.value);
+      let matched = null;
+      if (value) {
+        matched = targets.find((target) => (
+          !matchedIds.has(target.id)
+          && aliasesForTarget(target).some((alias) => normalizeAnswer(alias) === value)
+        ));
+      }
+      if (matched) {
+        matchedIds.add(matched.id);
+      }
+      return { input, status: matched ? "correct" : "wrong" };
+    });
   }
 
   function answerAliases(star) {
@@ -901,9 +909,21 @@
     ctx.save();
     state.problem.numberedStars.forEach((star, index) => {
       const point = project(star, cx, cy, radius);
+      drawNumberedStarRing(ctx, star, point.x, point.y);
       const offset = labelOffset(index);
       drawRedLabel(ctx, star.label, point.x + offset.x, point.y + offset.y);
     });
+    ctx.restore();
+  }
+
+  function drawNumberedStarRing(ctx, star, x, y) {
+    const ringRadius = Math.max(8, canvasStarRadius(star.mag) + 7);
+    ctx.save();
+    ctx.beginPath();
+    ctx.strokeStyle = "#9a2f2f";
+    ctx.lineWidth = 1.8;
+    ctx.arc(x, y, ringRadius, 0, Math.PI * 2);
+    ctx.stroke();
     ctx.restore();
   }
 
