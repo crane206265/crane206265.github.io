@@ -63,6 +63,8 @@
   const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
   const KST_SLOT_HOURS = 6;
   const CHART_BACKGROUND = "#fbfbf7";
+  const EXPORT_CANVAS_SIZE = 2400;
+  const EXPORT_LOGICAL_SIZE = 960;
   const RANKING_ENDPOINT = String(window.MISSING_STAR_RANKING_ENDPOINT || "").trim();
   const LEADERBOARD_LIMIT = 20;
 
@@ -185,6 +187,7 @@
       updateHints();
     });
     document.getElementById("missing-star-reveal").addEventListener("click", revealAnswers);
+    document.getElementById("missing-star-download").addEventListener("click", downloadChartImage);
     document.getElementById("missing-star-solution-toggle").addEventListener("click", () => {
       state.showSolution = !state.showSolution;
       drawChart();
@@ -344,6 +347,7 @@
       "missing-star-hint",
       "missing-star-reveal",
       "missing-star-refresh",
+      "missing-star-download",
     ].forEach((id) => {
       const control = document.getElementById(id);
       if (control) {
@@ -874,6 +878,10 @@
     canvas.height = Math.floor(size * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+    renderChartContent(ctx, size, state.showSolution);
+  }
+
+  function renderChartContent(ctx, size, showSolution) {
     const cx = size / 2;
     const cy = size / 2;
     const radius = size * 0.44;
@@ -887,10 +895,63 @@
     drawMessier(ctx, cx, cy, radius);
     drawNumberedStars(ctx, cx, cy, radius);
     drawReferenceStar(ctx, cx, cy, radius);
-    if (state.showSolution) {
+    if (showSolution) {
       drawMissingStars(ctx, cx, cy, radius);
     }
     drawFrameLabels(ctx, cx, cy, radius);
+  }
+
+  function downloadChartImage() {
+    if (!state.problem) {
+      return;
+    }
+
+    const exportCanvas = document.createElement("canvas");
+    exportCanvas.width = EXPORT_CANVAS_SIZE;
+    exportCanvas.height = EXPORT_CANVAS_SIZE;
+    const ctx = exportCanvas.getContext("2d");
+    ctx.setTransform(
+      EXPORT_CANVAS_SIZE / EXPORT_LOGICAL_SIZE,
+      0,
+      0,
+      EXPORT_CANVAS_SIZE / EXPORT_LOGICAL_SIZE,
+      0,
+      0,
+    );
+    renderChartContent(ctx, EXPORT_LOGICAL_SIZE, state.showSolution);
+
+    const saveBlob = (blob) => {
+      if (!blob) {
+        updateFeedback("Chart export failed.", "revealed");
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = chartDownloadFilename();
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    };
+
+    if (exportCanvas.toBlob) {
+      exportCanvas.toBlob(saveBlob, "image/png");
+      return;
+    }
+
+    const dataUrl = exportCanvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = chartDownloadFilename();
+    document.body.append(link);
+    link.click();
+    link.remove();
+  }
+
+  function chartDownloadFilename() {
+    const suffix = state.showSolution ? "-solution" : "";
+    return `missing-star-${state.problem.hourKey}${suffix}.png`;
   }
 
   function drawGrid(ctx, cx, cy, radius) {
