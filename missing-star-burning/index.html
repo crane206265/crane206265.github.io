@@ -5,27 +5,26 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="KST 6시간 간격 seed로 갱신되는 Missing Star 천문 성도 문제.">
-  <link rel="stylesheet" href="missing-star.css?v=20260804-6">
-  <title>Missing Star</title>
+  <meta name="description" content="Session-based Missing Star burning time practice.">
+  <link rel="stylesheet" href="missing-star.css?v=20260805-1">
+  <title>Missing Star Burning Time</title>
 </head>
 
 <body>
   <header class="app-header">
     <span class="home-link">Hakjin Lee</span>
     <div>
-      <p class="eyebrow">Daily Astronomy Practice</p>
-      <h1>Missing Star</h1>
+      <p class="eyebrow">Burning Time Practice</p>
+      <h1>Missing Star Burning Time</h1>
     </div>
     <div class="missing-star-date" aria-live="polite">
       <span id="missing-star-date">Loading</span>
       <span id="missing-star-countdown">--:--:--</span>
-      <a class="button compact-button" href="../missing-star-burning/">Burning Time</a>
     </div>
   </header>
 
   <main id="missing-star-root" class="missing-star-page" aria-labelledby="missing-star-title">
-    <h2 id="missing-star-title" class="visually-hidden">Missing Star problem</h2>
+    <h2 id="missing-star-title" class="visually-hidden">Missing Star burning time problem</h2>
 
     <section class="chart-panel" aria-label="Generated star chart">
       <div class="chart-toolbar">
@@ -87,6 +86,7 @@
 
       <div class="answer-actions">
         <button class="button primary-button" id="missing-star-check" type="button">Check</button>
+        <button class="button primary-button" id="missing-star-next" type="button" disabled>Next</button>
         <button class="button" id="missing-star-hint" type="button">Hint</button>
         <button class="button" id="missing-star-reveal" type="button">Reveal</button>
       </div>
@@ -96,12 +96,12 @@
       <section class="leaderboard-panel" aria-labelledby="leaderboard-title">
         <div class="leaderboard-header">
           <div>
-            <h3 id="leaderboard-title">Weekly Ranking</h3>
-            <p id="leaderboard-week" class="inline-data">Week: --</p>
+            <h3 id="leaderboard-title">Session Records</h3>
+            <p id="leaderboard-week" class="inline-data">Problem: --</p>
           </div>
-          <button class="button compact-button" id="leaderboard-refresh" type="button">Refresh</button>
+          <button class="button compact-button" id="leaderboard-refresh" type="button">Reset</button>
         </div>
-        <form class="leaderboard-form" id="leaderboard-form">
+        <form class="leaderboard-form is-hidden" id="leaderboard-form">
           <input id="leaderboard-name" type="text" maxlength="24" autocomplete="nickname" placeholder="Name">
           <button class="button primary-button" id="leaderboard-submit" type="submit" disabled>Submit score</button>
         </form>
@@ -110,15 +110,15 @@
           <table class="leaderboard-table">
             <thead>
               <tr>
-                <th scope="col">Rank</th>
-                <th scope="col">Name</th>
+                <th scope="col">Run</th>
                 <th scope="col">Score</th>
-                <th scope="col">Attempts</th>
+                <th scope="col">Correct</th>
+                <th scope="col">Seed</th>
               </tr>
             </thead>
             <tbody id="leaderboard-body">
               <tr>
-                <td colspan="4">Ranking endpoint is not configured.</td>
+                <td colspan="4">No completed problems yet.</td>
               </tr>
             </tbody>
           </table>
@@ -134,8 +134,7 @@
     <p>Last update: 2026-08-04 KST.</p>
   </footer>
 
-  <script src="ranking-config.js?v=20260804-1"></script>
-  <script src="missing-star.js?v=20260805-1"></script>
+  <script src="missing-star.js?v=20260805-2"></script>
 </body>
 
 </html>

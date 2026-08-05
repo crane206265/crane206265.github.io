@@ -65,8 +65,7 @@
   const CHART_BACKGROUND = "#fbfbf7";
   const EXPORT_CANVAS_SIZE = 2400;
   const EXPORT_LOGICAL_SIZE = 960;
-  const RANKING_ENDPOINT = String(window.MISSING_STAR_RANKING_ENDPOINT || "").trim();
-  const LEADERBOARD_LIMIT = 20;
+  const SESSION_BASE = createSessionBase();
 
   const state = {
     catalog: null,
@@ -82,6 +81,9 @@
     countdownTimer: null,
     startedAt: 0,
     lastResult: null,
+    problemIndex: 1,
+    sessionRecords: [],
+    recordedProblemKey: "",
     leaderboardWeekKey: "",
     leaderboardLoading: false,
   };
@@ -182,6 +184,7 @@
     });
 
     document.getElementById("missing-star-check").addEventListener("click", checkAnswers);
+    document.getElementById("missing-star-next").addEventListener("click", advanceBurningProblem);
     document.getElementById("missing-star-hint").addEventListener("click", () => {
       state.hintLevel = Math.min(3, state.hintLevel + 1);
       updateHints();
@@ -192,8 +195,7 @@
       state.showSolution = !state.showSolution;
       drawChart();
     });
-    document.getElementById("leaderboard-refresh").addEventListener("click", loadLeaderboard);
-    document.getElementById("leaderboard-form").addEventListener("submit", submitLeaderboardScore);
+    document.getElementById("leaderboard-refresh").addEventListener("click", resetSessionRecords);
   }
 
   async function loadCatalog() {
@@ -220,9 +222,9 @@
   }
 
   function generateTodayProblem() {
-    const hourKey = kstHourKey();
-    const dateKey = hourKey.slice(0, 10);
-    const seed = fnv1a(`missing-star:${hourKey}`);
+    const dateKey = kstDateKey();
+    const hourKey = burningProblemKey(dateKey);
+    const seed = fnv1a(`missing-star-burning:${SESSION_BASE}:${state.problemIndex}`);
     const rng = mulberry32(seed);
     const latitudeDeg = randomBetween(rng, LATITUDE_RANGE_DEG[0], LATITUDE_RANGE_DEG[1]);
     const longitudeDeg = randomBetween(rng, LONGITUDE_RANGE_DEG[0], LONGITUDE_RANGE_DEG[1]);
@@ -233,6 +235,7 @@
     state.startedAt = Date.now();
     state.lastResult = null;
     state.usedReveal = false;
+    state.recordedProblemKey = "";
 
     const projectedStars = state.catalog.stars
       .map((star) => {
@@ -348,6 +351,7 @@
       "missing-star-reveal",
       "missing-star-refresh",
       "missing-star-download",
+      "missing-star-next",
     ].forEach((id) => {
       const control = document.getElementById(id);
       if (control) {
@@ -406,15 +410,15 @@
 
   function renderProblemInfo() {
     const problem = state.problem;
-    document.getElementById("missing-star-date").textContent = `KST ${formatHourKey(problem.hourKey)}`;
+    document.getElementById("missing-star-date").textContent = `Problem ${state.problemIndex}`;
+    document.getElementById("missing-star-countdown").textContent = "Burning Time";
     document.getElementById("missing-star-seed").textContent = `seed ${problem.seed}`;
     document.getElementById("missing-star-chart-date").textContent = `Chart date ${formatUtcDateTime(problem.observationUtc)}`;
     document.getElementById("lst-reference").textContent = `Star R RA: ${formatRa(problem.referenceStar.ra)}`;
     document.getElementById("longitude-reference").textContent = `Chart date: ${formatUtcDateTime(problem.observationUtc)}`;
     document.getElementById("longitude-ra-reference").textContent = `Star R RA: ${formatRa(problem.referenceStar.ra)}`;
     document.getElementById("missing-star-solution-toggle").disabled = !state.revealed;
-    state.leaderboardWeekKey = kstWeekKeyFromHourKey(problem.hourKey);
-    document.getElementById("leaderboard-week").textContent = `Week: ${state.leaderboardWeekKey}`;
+    document.getElementById("leaderboard-week").textContent = `Problem: ${state.problemIndex}`;
     updateProgress(0);
     updateLeaderboardSubmitState();
     loadLeaderboard();
@@ -424,6 +428,7 @@
     const result = evaluateInputs();
     state.lastResult = result;
     updateLeaderboardSubmitState();
+    document.getElementById("missing-star-next").disabled = false;
     updateProgress(result.score);
 
     result.items.forEach(({ input, status }) => {
@@ -436,6 +441,7 @@
       state.showSolution = true;
       document.getElementById("missing-star-solution-toggle").disabled = false;
       drawChart();
+      recordSessionResult(result);
       updateFeedback("정답입니다. 정답 성도를 표시했습니다.", "success");
       return;
     }
@@ -630,18 +636,8 @@
   function updateLeaderboardSubmitState() {
     const submit = document.getElementById("leaderboard-submit");
     const nameInput = document.getElementById("leaderboard-name");
-    if (!submit || !nameInput) {
-      return;
-    }
-    const canSubmit = Boolean(
-      RANKING_ENDPOINT
-      && state.problem
-      && state.lastResult
-      && !state.usedReveal
-      && !state.leaderboardLoading,
-    );
-    submit.disabled = !canSubmit;
-    nameInput.disabled = !RANKING_ENDPOINT || state.leaderboardLoading;
+    if (submit) submit.disabled = true;
+    if (nameInput) nameInput.disabled = true;
   }
 
   function setLeaderboardStatus(message) {
@@ -652,73 +648,13 @@
   }
 
   function loadLeaderboard() {
-    if (!state.problem) {
-      return;
-    }
-    if (!RANKING_ENDPOINT) {
-      renderLeaderboardRows([]);
-      setLeaderboardStatus("Set MISSING_STAR_RANKING_ENDPOINT in ranking-config.js.");
-      updateLeaderboardSubmitState();
-      return;
-    }
-
-    state.leaderboardLoading = true;
-    updateLeaderboardSubmitState();
-    setLeaderboardStatus("Loading ranking...");
-    jsonpRequest({
-      action: "leaderboard",
-      weekKey: state.leaderboardWeekKey,
-      limit: LEADERBOARD_LIMIT,
-    }).then((data) => {
-      renderLeaderboardRows(Array.isArray(data.rows) ? data.rows : []);
-      setLeaderboardStatus(`Updated ${formatKstClock(new Date())} KST.`);
-    }).catch((error) => {
-      setLeaderboardStatus(`Ranking load failed: ${error.message}`);
-    }).finally(() => {
-      state.leaderboardLoading = false;
-      updateLeaderboardSubmitState();
-    });
+    renderLeaderboardRows(state.sessionRecords);
+    setLeaderboardStatus(`${state.sessionRecords.length} completed in this session.`);
   }
 
-  function submitLeaderboardScore(event) {
-    event.preventDefault();
-    if (!RANKING_ENDPOINT || !state.problem || !state.lastResult || state.usedReveal) {
-      updateLeaderboardSubmitState();
-      return;
-    }
-
-    const nameInput = document.getElementById("leaderboard-name");
-    const player = normalizePlayerName(nameInput.value);
-    if (!player) {
-      setLeaderboardStatus("Enter a name before submitting.");
-      nameInput.focus();
-      return;
-    }
-
-    const payload = {
-      action: "submit",
-      player,
-      weekKey: state.leaderboardWeekKey,
-      hourKey: state.problem.hourKey,
-      seed: state.problem.seed,
-      score: state.lastResult.score,
-      maxScore: MAX_SCORE,
-      durationMs: Math.max(0, Date.now() - state.startedAt),
-      revealed: state.usedReveal ? "1" : "0",
-    };
-
-    state.leaderboardLoading = true;
-    updateLeaderboardSubmitState();
-    setLeaderboardStatus("Submitting score...");
-    jsonpRequest(payload).then((data) => {
-      renderLeaderboardRows(Array.isArray(data.rows) ? data.rows : []);
-      setLeaderboardStatus(data.message || "Score submitted.");
-    }).catch((error) => {
-      setLeaderboardStatus(`Score submit failed: ${error.message}`);
-    }).finally(() => {
-      state.leaderboardLoading = false;
-      updateLeaderboardSubmitState();
-    });
+  function resetSessionRecords() {
+    state.sessionRecords = [];
+    loadLeaderboard();
   }
 
   function renderLeaderboardRows(rows) {
@@ -726,67 +662,51 @@
     if (!body) {
       return;
     }
-    if (!RANKING_ENDPOINT) {
-      body.innerHTML = '<tr><td colspan="4">Ranking endpoint is not configured.</td></tr>';
-      return;
-    }
     if (!rows.length) {
-      body.innerHTML = '<tr><td colspan="4">No scores for this week yet.</td></tr>';
+      body.innerHTML = '<tr><td colspan="4">No completed problems yet.</td></tr>';
       return;
     }
     body.innerHTML = rows.map((row, index) => (
       `<tr>`
       + `<td>${index + 1}</td>`
-      + `<td>${escapeHtml(row.player || "")}</td>`
       + `<td>${Number(row.score || 0)}</td>`
-      + `<td>${Number(row.attempts || 0)}</td>`
+      + `<td>${Number(row.correctCount || 0)} / ${TOTAL_ANSWER_COUNT}</td>`
+      + `<td>${escapeHtml(String(row.seed || ""))}</td>`
       + `</tr>`
     )).join("");
   }
 
-  function jsonpRequest(params) {
-    return new Promise((resolve, reject) => {
-      const callbackName = `missingStarRanking_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
-      const url = new URL(RANKING_ENDPOINT);
-      Object.entries({ ...params, callback: callbackName }).forEach(([key, value]) => {
-        url.searchParams.set(key, String(value));
-      });
-
-      const script = document.createElement("script");
-      const timeout = window.setTimeout(() => {
-        cleanup();
-        reject(new Error("request timed out"));
-      }, 10000);
-
-      function cleanup() {
-        window.clearTimeout(timeout);
-        delete window[callbackName];
-        script.remove();
-      }
-
-      window[callbackName] = (data) => {
-        cleanup();
-        if (data && data.ok === false) {
-          reject(new Error(data.error || "request failed"));
-          return;
-        }
-        resolve(data || {});
-      };
-
-      script.onerror = () => {
-        cleanup();
-        reject(new Error("network error"));
-      };
-      script.src = url.toString();
-      document.head.append(script);
-    });
+  function advanceBurningProblem() {
+    if (state.lastResult) {
+      recordSessionResult(state.lastResult);
+    }
+    state.problemIndex += 1;
+    state.showSolution = false;
+    state.revealed = false;
+    state.usedReveal = false;
+    state.hintLevel = 0;
+    state.lastResult = null;
+    generateTodayProblem();
+    renderInputs();
+    renderProblemInfo();
+    updateHints();
+    drawChart();
+    document.getElementById("missing-star-solution-toggle").disabled = true;
+    document.getElementById("missing-star-next").disabled = false;
+    updateFeedback("New burning time problem loaded.");
   }
 
-  function normalizePlayerName(value) {
-    return String(value || "")
-      .trim()
-      .replace(/\s+/g, " ")
-      .slice(0, 24);
+  function recordSessionResult(result) {
+    if (!state.problem || !result || state.usedReveal || state.recordedProblemKey === state.problem.hourKey) {
+      return;
+    }
+    state.recordedProblemKey = state.problem.hourKey;
+    state.sessionRecords.push({
+      seed: state.problem.seed,
+      score: result.score,
+      correctCount: result.correctCount,
+    });
+    loadLeaderboard();
   }
 
   function updateHints(forceReveal = false) {
@@ -1217,6 +1137,10 @@
     return `${kstDateKey(now)}-${hour}`;
   }
 
+  function burningProblemKey(dateKey) {
+    return `${dateKey}-B${String(state.problemIndex).padStart(4, "0")}`;
+  }
+
   function kstWeekKeyFromHourKey(hourKey) {
     const [year, month, day] = hourKey.split("-").map(Number);
     const kstDate = new Date(Date.UTC(year, month - 1, day));
@@ -1235,44 +1159,7 @@
   }
 
   function startCountdown() {
-    if (state.countdownTimer) {
-      clearInterval(state.countdownTimer);
-    }
-    const tick = () => {
-      if (!document.getElementById("missing-star-root")) {
-        clearInterval(state.countdownTimer);
-        state.countdownTimer = null;
-        return;
-      }
-
-      const now = new Date();
-      const kst = new Date(now.getTime() + KST_OFFSET_MS);
-      const nextSlotHour = Math.floor(kst.getUTCHours() / KST_SLOT_HOURS) * KST_SLOT_HOURS + KST_SLOT_HOURS;
-      const nextKstSlotUtcMs = Date.UTC(
-        kst.getUTCFullYear(),
-        kst.getUTCMonth(),
-        kst.getUTCDate(),
-        nextSlotHour,
-        0,
-        0,
-      ) - KST_OFFSET_MS;
-      const remaining = Math.max(0, nextKstSlotUtcMs - now.getTime());
-      document.getElementById("missing-star-countdown").textContent = formatDuration(remaining);
-
-      const currentKey = kstHourKey(now);
-      if (state.problem && currentKey !== state.problem.hourKey) {
-        state.showSolution = false;
-        state.revealed = false;
-        state.hintLevel = 0;
-        generateTodayProblem();
-        renderInputs();
-        renderProblemInfo();
-        updateHints();
-        drawChart();
-      }
-    };
-    tick();
-    state.countdownTimer = setInterval(tick, 1000);
+    document.getElementById("missing-star-countdown").textContent = "Burning Time";
   }
 
   function pickMany(items, count, rng) {
@@ -1290,6 +1177,15 @@
 
   function randomBetween(rng, min, max) {
     return min + (max - min) * rng();
+  }
+
+  function createSessionBase() {
+    if (window.crypto && window.crypto.getRandomValues) {
+      const values = new Uint32Array(2);
+      window.crypto.getRandomValues(values);
+      return `${values[0].toString(16)}${values[1].toString(16)}`;
+    }
+    return `${Date.now().toString(16)}${Math.floor(Math.random() * 0xffffffff).toString(16)}`;
   }
 
   function labelOffset(index) {
