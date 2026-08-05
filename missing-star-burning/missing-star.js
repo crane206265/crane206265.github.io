@@ -15,7 +15,7 @@
   const MIRROR_HORIZONTAL = true;
   const MIN_ALTITUDE_DEG = 10.0;
   const MESSIER_COUNT = 4;
-  const LATITUDE_TOLERANCE_DEG = 7.0;
+  const LATITUDE_TOLERANCE_DEG = 5.0;
   const LONGITUDE_TOLERANCE_DEG = 10.0;
   const LST_TOLERANCE_HOURS = 0.5;
   const TOTAL_ANSWER_COUNT = MISSING_COUNT + MESSIER_COUNT + NUMBERED_COUNT + 3;
@@ -66,6 +66,8 @@
   const EXPORT_CANVAS_SIZE = 2400;
   const EXPORT_LOGICAL_SIZE = 960;
   const SESSION_BASE = createSessionBase();
+  const RANKING_ENDPOINT = String(window.MISSING_STAR_RANKING_ENDPOINT || "").trim();
+  const LEADERBOARD_LIMIT = 20;
 
   const state = {
     catalog: null,
@@ -82,8 +84,6 @@
     startedAt: 0,
     lastResult: null,
     problemIndex: 1,
-    sessionRecords: [],
-    recordedProblemKey: "",
     leaderboardWeekKey: "",
     leaderboardLoading: false,
   };
@@ -195,7 +195,8 @@
       state.showSolution = !state.showSolution;
       drawChart();
     });
-    document.getElementById("leaderboard-refresh").addEventListener("click", resetSessionRecords);
+    document.getElementById("leaderboard-refresh").addEventListener("click", loadLeaderboard);
+    document.getElementById("leaderboard-form").addEventListener("submit", submitLeaderboardScore);
   }
 
   async function loadCatalog() {
@@ -235,7 +236,6 @@
     state.startedAt = Date.now();
     state.lastResult = null;
     state.usedReveal = false;
-    state.recordedProblemKey = "";
 
     const projectedStars = state.catalog.stars
       .map((star) => {
@@ -418,7 +418,8 @@
     document.getElementById("longitude-reference").textContent = `Chart date: ${formatUtcDateTime(problem.observationUtc)}`;
     document.getElementById("longitude-ra-reference").textContent = `Star R RA: ${formatRa(problem.referenceStar.ra)}`;
     document.getElementById("missing-star-solution-toggle").disabled = !state.revealed;
-    document.getElementById("leaderboard-week").textContent = `Problem: ${state.problemIndex}`;
+    state.leaderboardWeekKey = kstWeekKeyFromHourKey(problem.hourKey);
+    document.getElementById("leaderboard-week").textContent = `Week: ${state.leaderboardWeekKey}`;
     updateProgress(0);
     updateLeaderboardSubmitState();
     loadLeaderboard();
@@ -441,7 +442,6 @@
       state.showSolution = true;
       document.getElementById("missing-star-solution-toggle").disabled = false;
       drawChart();
-      recordSessionResult(result);
       updateFeedback("정답입니다. 정답 성도를 표시했습니다.", "success");
       return;
     }
@@ -562,7 +562,18 @@
       star.info.nameKo,
       star.info.bayerUnicode,
       star.info.bayerLatex,
+      bayerWithoutComponentNumber(star.info.bayerUnicode),
+      bayerWithoutComponentNumber(star.info.bayerLatex),
     ].filter(Boolean);
+  }
+
+  function bayerWithoutComponentNumber(value) {
+    return String(value || "")
+      .replace(/[\u2070\u00b9\u00b2\u00b3\u2074-\u2079]/g, "")
+      .replace(/\^\{?\d+\}?/g, "")
+      .replace(/([A-Za-z\u0370-\u03ff])\d+(?=\s|~|$)/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   function messierAliases(object) {
@@ -636,8 +647,18 @@
   function updateLeaderboardSubmitState() {
     const submit = document.getElementById("leaderboard-submit");
     const nameInput = document.getElementById("leaderboard-name");
-    if (submit) submit.disabled = true;
-    if (nameInput) nameInput.disabled = true;
+    if (!submit || !nameInput) {
+      return;
+    }
+    const canSubmit = Boolean(
+      RANKING_ENDPOINT
+      && state.problem
+      && state.lastResult
+      && !state.usedReveal
+      && !state.leaderboardLoading,
+    );
+    submit.disabled = !canSubmit;
+    nameInput.disabled = !RANKING_ENDPOINT || state.leaderboardLoading;
   }
 
   function setLeaderboardStatus(message) {
@@ -648,13 +669,73 @@
   }
 
   function loadLeaderboard() {
-    renderLeaderboardRows(state.sessionRecords);
-    setLeaderboardStatus(`${state.sessionRecords.length} completed in this session.`);
+    if (!state.problem) {
+      return;
+    }
+    if (!RANKING_ENDPOINT) {
+      renderLeaderboardRows([]);
+      setLeaderboardStatus("Set MISSING_STAR_RANKING_ENDPOINT in ranking-config.js.");
+      updateLeaderboardSubmitState();
+      return;
+    }
+
+    state.leaderboardLoading = true;
+    updateLeaderboardSubmitState();
+    setLeaderboardStatus("Loading ranking...");
+    jsonpRequest({
+      action: "leaderboard",
+      weekKey: state.leaderboardWeekKey,
+      limit: LEADERBOARD_LIMIT,
+    }).then((data) => {
+      renderLeaderboardRows(Array.isArray(data.rows) ? data.rows : []);
+      setLeaderboardStatus(`Updated ${formatKstClock(new Date())} KST.`);
+    }).catch((error) => {
+      setLeaderboardStatus(`Ranking load failed: ${error.message}`);
+    }).finally(() => {
+      state.leaderboardLoading = false;
+      updateLeaderboardSubmitState();
+    });
   }
 
-  function resetSessionRecords() {
-    state.sessionRecords = [];
-    loadLeaderboard();
+  function submitLeaderboardScore(event) {
+    event.preventDefault();
+    if (!RANKING_ENDPOINT || !state.problem || !state.lastResult || state.usedReveal) {
+      updateLeaderboardSubmitState();
+      return;
+    }
+
+    const nameInput = document.getElementById("leaderboard-name");
+    const player = normalizePlayerName(nameInput.value);
+    if (!player) {
+      setLeaderboardStatus("Enter a name before submitting.");
+      nameInput.focus();
+      return;
+    }
+
+    const payload = {
+      action: "submit",
+      player,
+      weekKey: state.leaderboardWeekKey,
+      hourKey: state.problem.hourKey,
+      seed: state.problem.seed,
+      score: state.lastResult.score,
+      maxScore: MAX_SCORE,
+      durationMs: Math.max(0, Date.now() - state.startedAt),
+      revealed: state.usedReveal ? "1" : "0",
+    };
+
+    state.leaderboardLoading = true;
+    updateLeaderboardSubmitState();
+    setLeaderboardStatus("Submitting score...");
+    jsonpRequest(payload).then((data) => {
+      renderLeaderboardRows(Array.isArray(data.rows) ? data.rows : []);
+      setLeaderboardStatus(data.message || "Score submitted.");
+    }).catch((error) => {
+      setLeaderboardStatus(`Score submit failed: ${error.message}`);
+    }).finally(() => {
+      state.leaderboardLoading = false;
+      updateLeaderboardSubmitState();
+    });
   }
 
   function renderLeaderboardRows(rows) {
@@ -662,24 +743,25 @@
     if (!body) {
       return;
     }
+    if (!RANKING_ENDPOINT) {
+      body.innerHTML = '<tr><td colspan="4">Ranking endpoint is not configured.</td></tr>';
+      return;
+    }
     if (!rows.length) {
-      body.innerHTML = '<tr><td colspan="4">No completed problems yet.</td></tr>';
+      body.innerHTML = '<tr><td colspan="4">No scores for this week yet.</td></tr>';
       return;
     }
     body.innerHTML = rows.map((row, index) => (
       `<tr>`
       + `<td>${index + 1}</td>`
+      + `<td>${escapeHtml(row.player || "")}</td>`
       + `<td>${Number(row.score || 0)}</td>`
-      + `<td>${Number(row.correctCount || 0)} / ${TOTAL_ANSWER_COUNT}</td>`
-      + `<td>${escapeHtml(String(row.seed || ""))}</td>`
+      + `<td>${Number(row.attempts || 0)}</td>`
       + `</tr>`
     )).join("");
   }
 
   function advanceBurningProblem() {
-    if (state.lastResult) {
-      recordSessionResult(state.lastResult);
-    }
     state.problemIndex += 1;
     state.showSolution = false;
     state.revealed = false;
@@ -696,17 +778,49 @@
     updateFeedback("New burning time problem loaded.");
   }
 
-  function recordSessionResult(result) {
-    if (!state.problem || !result || state.usedReveal || state.recordedProblemKey === state.problem.hourKey) {
-      return;
-    }
-    state.recordedProblemKey = state.problem.hourKey;
-    state.sessionRecords.push({
-      seed: state.problem.seed,
-      score: result.score,
-      correctCount: result.correctCount,
+  function jsonpRequest(params) {
+    return new Promise((resolve, reject) => {
+      const callbackName = `missingStarRanking_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+      const url = new URL(RANKING_ENDPOINT);
+      Object.entries({ ...params, callback: callbackName }).forEach(([key, value]) => {
+        url.searchParams.set(key, String(value));
+      });
+
+      const script = document.createElement("script");
+      const timeout = window.setTimeout(() => {
+        cleanup();
+        reject(new Error("request timed out"));
+      }, 10000);
+
+      function cleanup() {
+        window.clearTimeout(timeout);
+        delete window[callbackName];
+        script.remove();
+      }
+
+      window[callbackName] = (data) => {
+        cleanup();
+        if (data && data.ok === false) {
+          reject(new Error(data.error || "request failed"));
+          return;
+        }
+        resolve(data || {});
+      };
+
+      script.onerror = () => {
+        cleanup();
+        reject(new Error("network error"));
+      };
+      script.src = url.toString();
+      document.head.append(script);
     });
-    loadLeaderboard();
+  }
+
+  function normalizePlayerName(value) {
+    return String(value || "")
+      .trim()
+      .replace(/\s+/g, " ")
+      .slice(0, 24);
   }
 
   function updateHints(forceReveal = false) {
@@ -1138,7 +1252,7 @@
   }
 
   function burningProblemKey(dateKey) {
-    return `${dateKey}-B${String(state.problemIndex).padStart(4, "0")}`;
+    return `${dateKey}-B${SESSION_BASE.slice(0, 8)}-${String(state.problemIndex).padStart(4, "0")}`;
   }
 
   function kstWeekKeyFromHourKey(hourKey) {

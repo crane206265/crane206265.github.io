@@ -96,12 +96,12 @@
       <section class="leaderboard-panel" aria-labelledby="leaderboard-title">
         <div class="leaderboard-header">
           <div>
-            <h3 id="leaderboard-title">Session Records</h3>
-            <p id="leaderboard-week" class="inline-data">Problem: --</p>
+            <h3 id="leaderboard-title">Weekly Ranking</h3>
+            <p id="leaderboard-week" class="inline-data">Week: --</p>
           </div>
-          <button class="button compact-button" id="leaderboard-refresh" type="button">Reset</button>
+          <button class="button compact-button" id="leaderboard-refresh" type="button">Refresh</button>
         </div>
-        <form class="leaderboard-form is-hidden" id="leaderboard-form">
+        <form class="leaderboard-form" id="leaderboard-form">
           <input id="leaderboard-name" type="text" maxlength="24" autocomplete="nickname" placeholder="Name">
           <button class="button primary-button" id="leaderboard-submit" type="submit" disabled>Submit score</button>
         </form>
@@ -110,15 +110,15 @@
           <table class="leaderboard-table">
             <thead>
               <tr>
-                <th scope="col">Run</th>
+                <th scope="col">Rank</th>
+                <th scope="col">Name</th>
                 <th scope="col">Score</th>
-                <th scope="col">Correct</th>
-                <th scope="col">Seed</th>
+                <th scope="col">Attempts</th>
               </tr>
             </thead>
             <tbody id="leaderboard-body">
               <tr>
-                <td colspan="4">No completed problems yet.</td>
+                <td colspan="4">Ranking endpoint is not configured.</td>
               </tr>
             </tbody>
           </table>
@@ -134,7 +134,8 @@
     <p>Last update: 2026-08-04 KST.</p>
   </footer>
 
-  <script src="missing-star.js?v=20260805-3"></script>
+  <script src="../missing-star/ranking-config.js?v=20260804-1"></script>
+  <script src="missing-star.js?v=20260806-1"></script>
 </body>
 
 </html>

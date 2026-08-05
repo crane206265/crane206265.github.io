@@ -15,7 +15,7 @@
   const MIRROR_HORIZONTAL = true;
   const MIN_ALTITUDE_DEG = 10.0;
   const MESSIER_COUNT = 4;
-  const LATITUDE_TOLERANCE_DEG = 7.0;
+  const LATITUDE_TOLERANCE_DEG = 5.0;
   const LONGITUDE_TOLERANCE_DEG = 10.0;
   const LST_TOLERANCE_HOURS = 0.5;
   const TOTAL_ANSWER_COUNT = MISSING_COUNT + MESSIER_COUNT + NUMBERED_COUNT + 3;
@@ -556,7 +556,18 @@
       star.info.nameKo,
       star.info.bayerUnicode,
       star.info.bayerLatex,
+      bayerWithoutComponentNumber(star.info.bayerUnicode),
+      bayerWithoutComponentNumber(star.info.bayerLatex),
     ].filter(Boolean);
+  }
+
+  function bayerWithoutComponentNumber(value) {
+    return String(value || "")
+      .replace(/[\u2070\u00b9\u00b2\u00b3\u2074-\u2079]/g, "")
+      .replace(/\^\{?\d+\}?/g, "")
+      .replace(/([A-Za-z\u0370-\u03ff])\d+(?=\s|~|$)/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   function messierAliases(object) {
