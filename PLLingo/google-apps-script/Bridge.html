@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><title>PLLingo Google 연결</title></head>
+<body><p>PLLingo의 Google Sheets 연결 창입니다.</p><script>
+(function(){
+  'use strict';
+  const origin=<?!= originJSON ?>;
+  const channel=<?!= channelJSON ?>;
+  const pending=new Set();
+  function send(message){window.top.postMessage(Object.assign({type:'pllingo-sheets',channel:channel},message),origin);}
+  window.addEventListener('message',function(event){
+    const m=event.data;
+    if(event.source!==window.top||event.origin!==origin||!m||m.type!=='pllingo-sheets'||m.channel!==channel||typeof m.id!=='string'||m.id.length>100||pending.has(m.id))return;
+    pending.add(m.id);
+    const reply=function(value){pending.delete(m.id);send({id:m.id,reply:value});};
+    google.script.run.withSuccessHandler(reply).withFailureHandler(function(){reply({ok:false,error:{code:'GOOGLE_SERVICE_ERROR',message:'Google 서비스 요청을 완료하지 못했습니다. 연결 상태와 Apps Script 실행 기록을 확인하세요.'}});}).rpc({token:m.token,action:m.action,payload:m.payload,origin:origin});
+  });
+  send({ready:true});
+})();
+</script></body></html>

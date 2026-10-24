@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.tools/
+.env
+.env.*
+!.env.example
+materials/
+private-data/
+test-results/
+playwright-report/
+*.tsbuildinfo
+__pycache__/
+*.py[cod]
+.generated/
+apps-script-dist/
