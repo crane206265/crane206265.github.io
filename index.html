@@ -7,22 +7,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Hakjin Lee, undergraduate researcher in Physics at KAIST working on radio astronomy and computational astrophysics.">
   <link rel="stylesheet" href="main_style.css">
+  <script src="page-transitions.js" defer></script>
   <title>Hakjin Lee | Academic Homepage</title>
 </head>
 
 <body>
+  <a class="skip-link" href="#content">Skip to content</a>
   <header class="site-header">
     <a class="site-title" href="#" onclick="loadPage('introduction.html'); return false;">Hakjin Lee</a>
     <span class="site-subtitle">Undergraduate Researcher in Physics at KAIST</span>
   </header>
 
   <nav class="sidebar" aria-label="Primary navigation">
+    <p class="sidebar-label">Explore</p>
     <ul>
-      <li><a href="#" onclick="loadPage('introduction.html'); return false;">About</a></li>
-      <li><a href="#" onclick="loadPage('project.html'); return false;">Research</a></li>
-      <li><a href="#" onclick="loadPage('publication.html'); return false;">Outputs</a></li>
-      <li><a href="missing-star/">Missing Star</a></li>
-      <li><a href="#" onclick="loadPage('introduction.html', 'cv'); return false;">CV</a></li>
+      <li><a href="#about" data-section="about" aria-current="page" onclick="loadPage('introduction.html'); return false;">About</a></li>
+      <li class="research-group">
+        <a href="#research" data-section="research" onclick="loadPage('project.html'); return false;">Research</a>
+        <ul class="sidebar-subnav" aria-label="Research projects">
+          <li><a href="research/pta/">PTA &amp; VLBI</a></li>
+          <li><a href="research/asteroid/">Asteroid Inversion</a></li>
+          <li><a href="research/black-hole/">GRRT</a></li>
+        </ul>
+      </li>
+      <li><a href="#outputs" data-section="outputs" onclick="loadPage('publication.html'); return false;">Outputs</a></li>
+      <li><a href="#cv" data-section="cv" onclick="loadPage('introduction.html', 'cv'); return false;">CV</a></li>
+      <li class="sidebar-personal"><a href="missing-star/">Missing Star</a></li>
       <li><a href="blog/blog.html">Blog</a></li>
     </ul>
   </nav>
@@ -32,37 +42,81 @@
   </div>
 
   <script>
+    const pageRoutes = {
+      about: 'introduction.html',
+      research: 'project.html',
+      outputs: 'publication.html',
+      cv: 'introduction.html'
+    };
+    let pageRequest;
+
     function loadPage(page, targetId) {
-      fetch(`./pages/${page}`)
+      const section = targetId === 'cv' ? 'cv' :
+        Object.keys(pageRoutes).find(key => pageRoutes[key] === page);
+      if (!section) return;
+      const hash = `#${section}${targetId && targetId !== 'cv' ? `/${targetId}` : ''}`;
+      if (location.hash !== hash) {
+        history.pushState(null, '', hash);
+      }
+      renderPage(page, targetId, section, true);
+    }
+
+    function renderPage(page, targetId, section, focusContent = false) {
+      pageRequest?.abort();
+      pageRequest = new AbortController();
+      const request = pageRequest;
+      const content = document.getElementById('content');
+      content.setAttribute('aria-busy', 'true');
+      fetch(`./pages/${page}`, { signal: request.signal })
         .then(response => {
           if (!response.ok) {
             throw new Error(`Could not load ${page}`);
           }
           return response.text();
         })
-        .then(html => {
-          const content = document.getElementById('content');
+        .then(html => window.runPageTransition(() => {
+          if (request.signal.aborted) return;
           content.innerHTML = html;
-          content.focus({ preventScroll: true });
+          content.querySelectorAll('#cv details[data-cv-details]').forEach(details => {
+            details.open = section === 'cv';
+          });
+          content.removeAttribute('aria-busy');
+          document.querySelectorAll('.sidebar [data-section]').forEach(link => {
+            if (link.dataset.section === section) {
+              link.setAttribute('aria-current', 'page');
+            } else {
+              link.removeAttribute('aria-current');
+            }
+          });
+          if (focusContent) content.focus({ preventScroll: true });
 
           if (targetId) {
             const target = document.getElementById(targetId);
             if (target) {
-              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              target.scrollIntoView({ behavior: 'instant', block: 'start' });
             }
           } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'instant' });
           }
-        })
+        }))
         .catch(error => {
+          if (error.name === 'AbortError') return;
           console.error(error);
-          document.getElementById('content').innerHTML = '<section class="section-block"><h1>Page unavailable</h1><p class="content-text">The requested page could not be loaded.</p></section>';
+          content.removeAttribute('aria-busy');
+          content.innerHTML = '<section class="section-block"><h1>Page unavailable</h1><p class="content-text">The requested page could not be loaded.</p></section>';
         });
     }
 
-    window.addEventListener('load', () => {
-      loadPage('introduction.html');
-    });
+    function loadRoute() {
+      const [section, target] = location.hash.slice(1).split('/');
+      if (section === 'content' && document.getElementById('content').children.length) return;
+      const page = pageRoutes[section] || pageRoutes.about;
+      renderPage(page, section === 'cv' ? 'cv' : target, pageRoutes[section] ? section : 'about',
+        document.getElementById('content').childElementCount > 0);
+    }
+
+    window.addEventListener('load', loadRoute);
+    window.addEventListener('hashchange', loadRoute);
   </script>
 </body>
 

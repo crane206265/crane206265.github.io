@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ongoing black-hole ray-tracing and VLBI imaging project. Current report results cover Schwarzschild and Kerr images, disk emission, photon-ring visibility, and numerical null-condition checks.">
+  <link rel="stylesheet" href="../../main_style.css">
+  <script src="../../page-transitions.js" defer></script>
+  <link rel="stylesheet" href="../research.css">
+  <link rel="stylesheet" href="../assets/katex/katex.min.css">
+  <script src="../assets/katex/katex.min.js" defer></script>
+  <script src="../assets/katex/auto-render.min.js" defer></script>
+  <script src="../research.js" defer></script>
+  <title>Black-Hole Ray Tracing and VLBI Imaging | Hakjin Lee</title>
+</head>
+<body class="research-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="site-title" href="../../">Hakjin Lee</a>
+    <span class="site-subtitle">Research / Black Holes</span>
+  </header>
+  <nav class="sidebar" aria-label="Primary navigation">
+    <p class="sidebar-label">Explore</p>
+    <ul>
+      <li><a href="../../#about">About</a></li>
+      <li class="research-group">
+        <a href="../../#research" aria-current="location">Research</a>
+        <ul class="sidebar-subnav" aria-label="Research projects">
+          <li><a href="../pta/">PTA &amp; VLBI</a></li>
+          <li><a href="../asteroid/">Asteroid Inversion</a></li>
+          <li><a href="../black-hole/" aria-current="page">GRRT</a></li>
+        </ul>
+      </li>
+      <li><a href="../../#outputs">Outputs</a></li>
+      <li><a href="../../#cv">CV</a></li>
+      <li class="sidebar-personal"><a href="../../missing-star/">Missing Star</a></li>
+      <li><a href="../../blog/blog.html">Blog</a></li>
+    </ul>
+  </nav>
+
+  <div class="content-background">
+  <main id="main" class="research-main">
+    <header class="research-intro page-heading-panel">
+      <div class="research-hero-art" aria-hidden="true">
+        <img src="assets/hero-figure.png" width="822" height="822" decoding="async" alt="">
+      </div>
+      <p class="project-status">Ongoing project</p>
+      <p class="eyebrow">General relativity &middot; Black-hole imaging</p>
+      <h1>Black-Hole Ray Tracing and VLBI Imaging</h1>
+      <p class="hero-lede">Tracing photons through curved spacetime to understand black-hole shadows,
+        lensed disk images, and relativistic brightness asymmetry.</p>
+      <p class="project-stage"><strong>Current stage:</strong> This page presents the ray-tracing results documented
+        in the PH471 report, including Schwarzschild and Kerr disk images and numerical consistency checks.
+        The project is ongoing, with extension toward simulated VLBI imaging.</p>
+      <p class="research-byline">KAIST &middot; May 2026&ndash;Present<br>Current results based on <cite>RayTracing Report</cite> (PH471)</p>
+      <a class="button" href="assets/ray-tracing-report.pdf" target="_blank" rel="noopener noreferrer">View report (PDF)</a>
+    </header>
+
+    <section class="key-results" aria-labelledby="results-summary-title">
+      <h2 id="results-summary-title">Current results</h2>
+      <ol>
+        <li><strong>Different physical scales shape the image.</strong> The Schwarzschild shadow, photon sphere,
+          and disk inner edge have distinct roles in photon capture, strong lensing, and emission.</li>
+        <li><strong>Disk motion and geometry control visibility.</strong> Doppler shifts create brightness asymmetry
+          even without black-hole spin. In the Kerr comparisons, spin, inclination, and optically thick disk occlusion
+          change which narrow ring-like segments are visible.</li>
+        <li><strong>Numerical checks support qualitative interpretation.</strong> The report tracks null-condition
+          errors along disk-hit rays, identifying stronger integration errors near the most strongly lensed trajectories.</li>
+      </ol>
+    </section>
+
+    <nav class="research-toc" aria-label="On this page">
+      <p>On this page</p>
+      <ul>
+        <li><a class="text-link" href="#methods">Ray-tracing method</a></li>
+        <li><a class="text-link" href="#schwarzschild">Schwarzschild results</a></li>
+        <li><a class="text-link" href="#kerr">Kerr comparisons</a></li>
+        <li><a class="text-link" href="#validation">Numerical validation</a></li>
+        <li><a class="text-link" href="#ongoing">Ongoing work</a></li>
+        <li><a class="text-link" href="#references">References</a></li>
+      </ul>
+    </nav>
+
+    <section class="poster-section" id="methods" aria-labelledby="methods-title">
+      <h2 id="methods-title">Null-geodesic ray tracing</h2>
+      <p>Photons follow null geodesics through curved spacetime. Backward ray tracing starts from an observer's
+        image plane and integrates each pixel's photon direction toward the scene, determining whether the ray
+        intersects the disk, is captured by the black hole, or escapes without disk emission.</p>
+      <div class="equation" tabindex="0" role="region" aria-label="Null condition and photon geodesic equation">
+        \[g_{\mu\nu}p^\mu p^\nu=0,\qquad p^\mu=\frac{dx^\mu}{d\lambda},\]
+        \[\frac{dp^\mu}{d\lambda}+\Gamma^\mu_{\alpha\beta}p^\alpha p^\beta=0.\]
+      </div>
+      <p>The report uses metric signature \((-,+,+,+)\), Schwarzschild geometry for the non-rotating case,
+        and Boyer&ndash;Lindquist coordinates for Kerr black holes with mass \(M\) and spin \(a=J/M\).
+        In geometrized units \(G=c=1\), the Schwarzschild line element is</p>
+      <div class="equation" tabindex="0" role="region" aria-label="Schwarzschild metric">
+        \[ds^2=-\left(1-\frac{2M}{r}\right)dt^2+
+        \left(1-\frac{2M}{r}\right)^{-1}dr^2+r^2d\Omega^2.\]
+      </div>
+      <h3>Observer, integration, and disk model</h3>
+      <p>The observer is at a finite distance. Initial photon momenta are constructed in the observer's local
+        tetrad, transformed to global coordinates, and integrated with fourth-order Runge&ndash;Kutta (RK4).
+        Observer position, inclination, and image resolution determine the screen setup.</p>
+      <p>The disk lies on the equatorial plane with prescribed inner and outer radii. The simple emission prescription
+        is \(I_{\rm em}\propto r^{-q}\); the report also discusses the physically motivated Novikov&ndash;Thorne
+        relativistic thin-disk model. For the optically thick comparisons, a ray terminates at its first disk intersection.</p>
+      <h3>Redshift and observed intensity</h3>
+      <p>The frequency shift combines gravitational effects and emitter/observer motion. With four-velocity
+        \(U^\mu\), the redshift factor and specific-intensity transformation are</p>
+      <div class="equation" tabindex="0" role="region" aria-label="Frequency shift and observed specific intensity">
+        \[g=\frac{\nu_{\rm obs}}{\nu_{\rm em}}
+        =\frac{(p_\mu U^\mu)_{\rm obs}}{(p_\mu U^\mu)_{\rm em}},\qquad
+        I_{\nu,\rm obs}=g^3I_{\nu,\rm em}.\]
+      </div>
+      <p>Evaluating the emission and redshift for disk-hit rays produces the intensity and redshift maps below.</p>
+    </section>
+
+    <section class="poster-section" id="schwarzschild" aria-labelledby="schwarzschild-title">
+      <h2 id="schwarzschild-title">Schwarzschild: shadow, lensing, and disk emission</h2>
+      <h3>Shadow and characteristic radii</h3>
+      <p>The central shadow is an apparent capture region on the image plane. Its boundary is related to unstable
+        null geodesics, whereas the event horizon is a causal boundary in spacetime. For a distant observer,
+        the critical impact parameter is \(b_{\rm crit}=3\sqrt{3}M\).</p>
+      <figure class="result-figure " id="figure-1">
+        <a href="assets/schwarzschild-shadow.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 1 at full resolution in a new tab">
+          <img src="assets/schwarzschild-shadow.png" width="1028" height="444" loading="lazy" alt="Two Schwarzschild intensity images, one with a dashed theoretical shadow guide.">
+        </a>
+        <figcaption><strong>Figure 1.</strong> Schwarzschild ray-traced intensity image and theoretical shadow guide at inclination 80&deg;. The dashed boundary marks the distant-observer critical impact parameter.</figcaption>
+      </figure>
+      <div class="table-wrap">
+        <table class="research-table">
+          <caption>Distinct Schwarzschild scales, in units of M</caption>
+          <thead><tr><th scope="col">Quantity</th><th scope="col">Value</th><th scope="col">Role</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Event horizon</th><td>\(2M\)</td><td>Causal boundary</td></tr>
+            <tr><th scope="row">Photon sphere</th><td>\(3M\)</td><td>Unstable circular null orbits</td></tr>
+            <tr><th scope="row">Critical impact parameter</th><td>\(3\sqrt{3}M\)</td><td>Distant-observer shadow boundary on the image plane</td></tr>
+            <tr><th scope="row">ISCO / disk inner radius</th><td>\(6M\)</td><td>Inner edge of the emitting disk in the Schwarzschild setup</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Dark regions outside the theoretical capture boundary can arise when rays miss the emitting part of the
+        disk. The disk's inner edge and the shadow boundary therefore need not coincide.</p>
+      <h3>Photon sphere and ring-like features</h3>
+      <p>Using conserved energy \(E\) and angular momentum \(L\), radial null motion can be written as</p>
+      <div class="equation" tabindex="0" role="region" aria-label="Null-geodesic effective potential">
+        \[\left(\frac{dr}{d\lambda}\right)^2+V_{\rm eff}(r)=E^2,\qquad
+        V_{\rm eff}(r)=\left(1-\frac{2M}{r}\right)\frac{L^2}{r^2}.\]
+      </div>
+      <p>The potential has an unstable maximum at \(r=3M\). Near-critical rays can accumulate large deflection
+        angles while remaining close to this region. Higher-order disk images are consequently compressed near
+        the critical curve. The thin bright structure near the shadow is interpreted in the report as a photon-ring-like
+        feature, while the broader emission is dominated by direct and weakly lensed disk images.</p>
+      <h3>Doppler asymmetry without black-hole spin</h3>
+      <p>The Schwarzschild reference has inclination \(i=80^\circ\). In this orientation, the right side of the
+        rotating disk has larger \(g\) and appears brighter; the left side has smaller \(g\).
+        Gravitational redshift also contributes, especially toward the inner disk.</p>
+      <figure class="result-figure figure-narrow" id="figure-2">
+        <a href="assets/redshift-map.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 2 at full resolution in a new tab">
+          <img src="assets/redshift-map.png" width="1178" height="1000" loading="lazy" alt="Schwarzschild disk redshift-factor map with larger values on the right and smaller values on the left.">
+        </a>
+        <figcaption><strong>Figure 2.</strong> Redshift-factor map for the Schwarzschild reference. The rotating disk produces the left&ndash;right Doppler contrast.</figcaption>
+      </figure>
+      <p>The disk's orbital motion explains why a brightness-asymmetric image can arise even in a non-rotating,
+        spherically symmetric spacetime.</p>
+    </section>
+
+    <section class="poster-section" id="kerr" aria-labelledby="kerr-title">
+      <h2 id="kerr-title">Kerr: spin, inclination, and disk occlusion</h2>
+      <h3>Schwarzschild versus Kerr</h3>
+      <p>Kerr rotation changes the photon trajectories through frame dragging. A zero-angular-momentum observer
+        (ZAMO) has angular velocity</p>
+      <div class="equation" tabindex="0" role="region" aria-label="ZAMO angular velocity">
+        \[\Omega_{\rm ZAMO}=-\frac{g_{t\phi}}{g_{\phi\phi}}.\]
+      </div>
+      <p>Prograde and retrograde near-critical trajectories then behave differently. In the report's optically
+        thick disk geometry, the narrow prograde-side crescent can remain exposed while other trajectories meet
+        the disk first and are screened.</p>
+      <figure class="result-figure figure-narrow" id="figure-3">
+        <a href="assets/schwarzschild-kerr.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 3 at full resolution in a new tab">
+          <img src="assets/schwarzschild-kerr.png" width="1028" height="884" loading="lazy" alt="Rows compare Schwarzschild and Kerr black holes with redshift and intensity panels.">
+        </a>
+        <figcaption><strong>Figure 3.</strong> Schwarzschild (top, a/M = 0) and Kerr (bottom, a/M = 0.8) at i = 80&deg;. Left column: redshift factor. Right: relative intensity on a logarithmic scale.</figcaption>
+      </figure>
+      <h3>Inclination dependence</h3>
+      <p>The inclination series holds \(a/M=0.8\) fixed and compares \(20^\circ\), \(60^\circ\), and \(80^\circ\).
+        Near face-on viewing, the direct inner-disk image overlaps the near-critical image region. At higher
+        inclination, the geometry can expose part of the narrow crescent while disk occlusion still hides other segments.</p>
+      <figure class="result-figure figure-narrow" id="figure-4">
+        <a href="assets/inclination-series.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 4 at full resolution in a new tab">
+          <img src="assets/inclination-series.png" width="1028" height="1332" loading="lazy" alt="Three rows compare a Kerr disk viewed at 20, 60 and 80 degrees.">
+        </a>
+        <figcaption><strong>Figure 4.</strong> Inclination series at a/M = 0.8: 20&deg;, 60&deg;, and 80&deg; from top to bottom. Each row pairs redshift and logarithmic relative intensity.</figcaption>
+      </figure>
+      <h3>Spin dependence</h3>
+      <p>The spin series compares \(a/M=0\), \(0.4\), and \(0.8\) at \(i=80^\circ\).
+        Stronger spin changes the prograde/retrograde geodesic asymmetry and moves the prograde ISCO inward,
+        changing how the emitting disk overlaps the near-critical image region.</p>
+      <figure class="result-figure figure-narrow" id="figure-5">
+        <a href="assets/spin-series.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 5 at full resolution in a new tab">
+          <img src="assets/spin-series.png" width="1028" height="1332" loading="lazy" alt="Three rows compare black-hole spin parameters zero, 0.4 and 0.8 at fixed inclination.">
+        </a>
+        <figcaption><strong>Figure 5.</strong> Spin series at i = 80&deg;: a/M = 0, 0.4, and 0.8 from top to bottom. Left: redshift factor. Right: logarithmic relative intensity.</figcaption>
+      </figure>
+      <p>Within this model, the visibility of a ring-like segment reflects the combination of spacetime,
+        inclination, and optically thick disk screening. These image-based comparisons provide a qualitative
+        interpretation of the features shown in the report.</p>
+    </section>
+
+    <section class="poster-section" id="validation" aria-labelledby="validation-title">
+      <h2 id="validation-title">Numerical validation</h2>
+      <p>Metric compatibility and the geodesic equation preserve \(g_{\mu\nu}p^\mu p^\nu=0\) in the exact theory.
+        The numerical test monitors the remaining contraction relative to the size of its individual terms:</p>
+      <div class="equation" tabindex="0" role="region" aria-label="Relative null-condition error">
+        \[\epsilon_{\rm null}=\frac{\left|g_{\mu\nu}p^\mu p^\nu\right|}
+        {\sum_{\mu,\nu}\left|g_{\mu\nu}p^\mu p^\nu\right|}.\]
+      </div>
+      <figure class="result-figure " id="figure-6">
+        <a href="assets/null-validation.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 6 at full resolution in a new tab">
+          <img src="assets/null-validation.png" width="1200" height="500" loading="lazy" alt="Curves show relative null-condition error and radial coordinate along disk-hit photon trajectories.">
+        </a>
+        <figcaption><strong>Figure 6.</strong> Left: log relative null-condition residual along disk-hit rays. Right: radial histories expressed as log(r/r<sub>+</sub>), with horizon and disk-radius guides. The horizontal axis is integration step.</figcaption>
+      </figure>
+      <p>The reported initial relative residuals are around \(10^{-15}\)&ndash;\(10^{-18}\).
+        For most disk-hit rays, they grow to roughly \(10^{-5}\)&ndash;\(10^{-4}\) near disk crossing;
+        a small number of near-critical rays show larger spikes. The radial histories also show some rays entering
+        inside the disk's inner radius before returning to the emitting disk.</p>
+      <p>These checks support qualitative interpretation of the main disk and shadow features. Resolving the
+        most strongly lensed trajectories more accurately requires smaller integration steps or higher-order
+        integration methods. A small initial residual alone does not measure the final image accuracy.</p>
+    </section>
+
+    <section class="poster-section" id="ongoing" aria-labelledby="ongoing-title">
+      <h2 id="ongoing-title">Ongoing work</h2>
+      <p>The report establishes a ray-tracing foundation connecting null geodesics to shadows, lensed disk images,
+        Doppler asymmetry, and spin-dependent visibility. The broader <strong>Black-Hole Ray Tracing and VLBI Imaging</strong>
+        project remains in progress.</p>
+      <ul>
+        <li>Refine the numerical treatment of near-critical rays and test integration accuracy.</li>
+        <li>Continue the extension toward simulated VLBI imaging.</li>
+      </ul>
+      <p class="research-scope">Current figures and numerical results come from the supplied ray-tracing report.
+        The VLBI extension is ongoing and is not represented by these report figures.</p>
+    </section>
+
+    <section class="poster-section" id="references" aria-labelledby="references-title">
+      <h2 id="references-title">Report references</h2>
+      <ol class="research-references">
+        <li id="ref-1">Luminet, J. P. (1979). Image of a spherical black hole with thin accretion disk. Astronomy and Astrophysics, 75, 228&ndash;235.</li>
+        <li id="ref-2">Page, D. N. &amp; Thorne, K. S. (1974). Disk-accretion onto a black hole. Time-averaged structure of accretion disk. The Astrophysical Journal, 191, 499&ndash;506. <a href="https://doi.org/10.1086/152990">doi:10.1086/152990</a>.</li>
+        <li id="ref-3">Carroll, S. M. (2004). <cite>Spacetime and Geometry: An Introduction to General Relativity.</cite> Addison Wesley.</li>
+        <li id="ref-4">Mueller, T. &amp; Grave, F. (2010). Catalogue of Spacetimes. <a href="https://arxiv.org/abs/0904.4184">arXiv:0904.4184</a>.</li>
+        <li id="ref-5"><a href="https://www.roma1.infn.it/teongrav/onde19_20/kerr.pdf">The Kerr solution, Chapter 21 lecture notes</a>, as cited in the report.</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="research-footer">
+    <a class="text-link" href="../../#research">Back to research</a>
+    <a class="text-link" href="../pta/">PTA &amp; VLBI &rarr;</a>
+  </footer>
+  </div>
+</body>
+</html>

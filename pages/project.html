@@ -1,4 +1,4 @@
-<section id="project" class="section-block" aria-labelledby="research-title">
+<section id="project" class="section-block page-heading-panel" aria-labelledby="research-title">
   <h1 id="research-title">Selected Research Projects</h1>
   <p class="content-text">
     This page provides brief descriptions of publicly shareable aspects of my ongoing and completed research projects.
@@ -8,12 +8,12 @@
 
 <section class="project-stack" aria-label="Research project list">
   <article id="vlbi-pta" class="project-card wide-card">
-    <p class="meta">Observational Cosmology and Astronomy Lab, KAIST &middot; May 2026-Present &middot; Undergraduate Research Program</p>
+    <p class="meta">Observational Cosmology and Astronomy Lab, KAIST &middot; Jun. 2026-Present &middot; Undergraduate Research Program</p>
     <h2>VLBI-Assisted Localization of Continuous Gravitational-Wave Sources</h2>
     <p>
-      Investigating how VLBI astrometric information can improve the localization of continuous gravitational-wave
-      sources with SKAO-era pulsar timing arrays, with the eventual goal of identifying possible host galaxies of
-      supermassive black-hole binaries.
+      Developed Fisher-matrix forecasts of continuous gravitational-wave localization with VLBI-informed
+      pulsar-distance priors, including thermal and ionospheric astrometric errors. Compared 300- and 1600-MHz
+      strategies, identified high-impact pulsars, and assessed host-galaxy candidates using galaxy catalogs.
     </p>
     <p>
       The project studies how pulsar-distance and astrometric priors affect pulsar-term phase uncertainty and
@@ -28,15 +28,16 @@
       <span class="tag">SKAO</span>
       <span class="tag">Astrometry</span>
     </div>
+    <p class="subsection"><a class="text-link" href="research/pta/">Research overview &amp; poster results &rarr;</a></p>
   </article>
 
   <article id="asteroid-lightcurve" class="project-card wide-card">
-    <p class="meta">Undergraduate Individual Study, ObsCAL, KAIST &middot; Jul. 2024-Aug. 2026</p>
+    <p class="meta">Undergraduate Individual Study, ObsCAL, KAIST &middot; Jun. 2025-Jun. 2026</p>
     <h2>Neural-Surrogate-Guided Sequential Reshaping for Asteroid Lightcurve Inversion</h2>
     <p>
-      Developing a neural-surrogate-guided optimization framework that sequentially modifies a three-dimensional
-      asteroid shape to reproduce multiple observed lightcurves. The project combines synthetic forward modeling,
-      inverse-problem optimization, and machine-learning-based reward prediction.
+      Developed neural-surrogate-guided sequential shape reconstruction from synthetic asteroid lightcurves
+      using learned reward maps and local shape deformations. Analyzed photometric degeneracy through PCA
+      of reconstructed shape families, identifying modes with weak lightcurve sensitivity.
     </p>
     <p>
       The work focuses on improving initial conditions and sequential action selection while reducing the need for
@@ -52,6 +53,8 @@
       <span class="tag">Scientific Machine Learning</span>
       <span class="tag">Python</span>
     </div>
+    <p class="award-tag">Excellence Award &middot; Korean Astronomical Society Fall Meeting &middot; Oct. 2026 &middot; PSS02</p>
+    <p class="subsection"><a class="text-link" href="research/asteroid/">Research overview &amp; poster results &rarr;</a></p>
   </article>
 
   <article id="black-hole-ray-tracing" class="project-card wide-card">
@@ -68,6 +71,20 @@
       <span class="tag">VLBI</span>
       <span class="tag">Numerical Simulation</span>
       <span class="tag">Python</span>
+    </div>
+    <p class="subsection"><a class="text-link" href="research/black-hole/">Research overview &amp; report results &rarr;</a></p>
+  </article>
+
+  <article id="kvn-scheduling" class="project-card wide-card">
+    <p class="meta">Korea Astronomy &amp; Space Science Institute &middot; Jul.-Aug. 2026 &middot; Undergraduate Research Internship</p>
+    <h2>Atmospheric Forecasts for Autonomous KVN Scheduling</h2>
+    <p>Developed GEFS-based atmospheric opacity and zenith total delay forecasts for autonomous
+      Korean VLBI Network (KVN) scheduling, using machine-learning corrections.</p>
+    <p>Evaluated baseline differential delay, calibrated ensemble uncertainty, and seasonal high-opacity
+      detection risks for VLBI observations. Presented as PAT07 at the 2026 Korean Astronomical Society Fall Meeting.</p>
+    <div class="tag-group">
+      <span class="tag">KVN</span><span class="tag">VLBI</span><span class="tag">Atmospheric Forecasts</span>
+      <span class="tag">Machine Learning</span><span class="tag">Observation Scheduling</span>
     </div>
   </article>
 

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Complete poster overview of neural-surrogate-guided asteroid lightcurve inversion: background, reconstruction pipeline, performance, photometric degeneracy, and higher-order sensitivity.">
+  <link rel="stylesheet" href="../../main_style.css">
+  <script src="../../page-transitions.js" defer></script>
+  <link rel="stylesheet" href="../research.css">
+  <link rel="stylesheet" href="../assets/katex/katex.min.css">
+  <script src="../assets/katex/katex.min.js" defer></script>
+  <script src="../assets/katex/auto-render.min.js" defer></script>
+  <script src="../research.js" defer></script>
+  <title>Asteroid Inversion — Research Overview | Hakjin Lee</title>
+</head>
+<body class="research-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="site-title" href="../../">Hakjin Lee</a>
+    <span class="site-subtitle">Research / Asteroid Inversion</span>
+  </header>
+  <nav class="sidebar" aria-label="Primary navigation">
+    <p class="sidebar-label">Explore</p>
+    <ul>
+      <li><a href="../../#about">About</a></li>
+      <li class="research-group">
+        <a href="../../#research" aria-current="location">Research</a>
+        <ul class="sidebar-subnav" aria-label="Research projects">
+          <li><a href="../pta/">PTA &amp; VLBI</a></li>
+          <li><a href="../asteroid/" aria-current="page">Asteroid Inversion</a></li>
+          <li><a href="../black-hole/">GRRT</a></li>
+        </ul>
+      </li>
+      <li><a href="../../#outputs">Outputs</a></li>
+      <li><a href="../../#cv">CV</a></li>
+      <li class="sidebar-personal"><a href="../../missing-star/">Missing Star</a></li>
+      <li><a href="../../blog/blog.html">Blog</a></li>
+    </ul>
+  </nav>
+
+  <div class="content-background">
+  <main id="main" class="research-main">
+    <header class="research-intro page-heading-panel">
+      <div class="research-hero-art" aria-hidden="true">
+        <img src="assets/hero-pca-shape.png" width="475" height="500" decoding="async" alt="">
+      </div>
+      <p class="research-award" aria-label="Excellence Award for this research, Korean Astronomical Society Fall Meeting, October 2026, PSS02">
+        <span class="award-symbol" aria-hidden="true">&#9733;</span><strong>Excellence Award</strong>
+        &middot; KAS Fall 2026 &middot; PSS02
+      </p>
+      <p class="eyebrow">Inverse problems &middot; Scientific machine learning</p>
+      <h1>Neural-Surrogate-Guided Asteroid Lightcurve Inversion: Shape Reconstruction and Photometric Degeneracy</h1>
+      <p class="hero-lede">
+        A neural surrogate proposes local shape changes, and a physical lightcurve simulator evaluates them.
+        The resulting sequential reshaping procedure explores both photometric reconstruction and the
+        shape ambiguity that remains after a good fit.
+      </p>
+      <p class="research-byline">Hakjin Lee &amp; Junhan Kim<br>Department of Physics, KAIST &middot; 2026 Fall KAS Meeting &middot; PSS02</p>
+      <a class="button" href="assets/conference-poster.pdf" target="_blank" rel="noopener noreferrer">View poster (PDF)</a>
+    </header>
+
+    <section class="key-results" aria-labelledby="results-title">
+      <h2 id="results-title">Key results</h2>
+      <ol>
+        <li><strong>Low lightcurve errors for most synthetic samples.</strong>
+          Median sample-mean and worst-lightcurve target-amplitude RMSE are <strong>0.0514</strong> and
+          <strong>0.0632</strong>, respectively, for the best recovered states. A high-error tail remains.</li>
+        <li><strong>Viewing geometry matters.</strong>
+          Reconstruction error generally increases as observer aspect moves away from near-equator viewing
+          (90&deg;) in the tested geometry bank.</li>
+        <li><strong>A good fit leaves shape ambiguity.</strong>
+          Empirical PCA modes reveal weakly constrained deformations. In the finite-amplitude tests,
+          corrected PCA directions produce smaller photometric changes than first-order-matched random directions.</li>
+      </ol>
+    </section>
+
+
+    <nav class="research-toc" aria-label="On this page">
+      <p>On this page</p>
+      <ul>
+        <li><a class="text-link" href="#background">Background</a></li>
+        <li><a class="text-link" href="#methods">Reconstruction</a></li>
+        <li><a class="text-link" href="#performance">Performance</a></li>
+        <li><a class="text-link" href="#degeneracy">Shape degeneracy</a></li>
+        <li><a class="text-link" href="#conclusions">Conclusions</a></li>
+        <li><a class="text-link" href="#references">References</a></li>
+      </ul>
+    </nav>
+
+    <section class="poster-section" id="background" aria-labelledby="background-title">
+      <h2 id="background-title">Background &amp; inverse problem</h2>
+      <p>Can we reconstruct an asteroid's three-dimensional shape from disk-integrated lightcurves?
+        As an unresolved asteroid rotates, its brightness depends on shape, illumination, and viewing direction.
+        Combining observations at different orbital positions adds complementary geometric information
+        <a href="#ref-1">[1]</a>, <a href="#ref-2">[2]</a>.</p>
+      <figure class="result-figure " id="figure-1">
+        <a href="assets/observing-geometry.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 1 at full resolution in a new tab">
+          <img src="assets/observing-geometry.png" width="1672" height="941" loading="lazy" alt="Sun, asteroid and Earth at different orbital positions produce different rotational lightcurves.">
+        </a>
+        <figcaption><strong>Figure 1.</strong> Different Sun&ndash;asteroid&ndash;Earth geometries produce distinct lightcurves for a fixed rotating shape; combining geometries helps constrain its three-dimensional structure.</figcaption>
+      </figure>
+      <p>The forward map takes a shape \(\mathbf r\) and observing geometries \(\Gamma\) to lightcurves
+        \(\mathbf L(\mathbf r;\Gamma)\). The inverse mapping is generally non-unique: different shapes can reproduce
+        almost the same photometry. This project examines both reconstruction quality and the remaining shape freedom.</p>
+      <h3>Sequential reformulation</h3>
+      <p>The shape is a polyhedron on a \(\theta\)&ndash;\(\phi\) radius grid, with discrete local cutting actions.
+        Rather than optimize every radius simultaneously, the method searches for useful local deformations and applies them sequentially:</p>
+      <div class="equation" tabindex="0" role="region" aria-label="Sequential shape reconstruction">
+        \[\mathbf r^{(0)}\longrightarrow\mathbf r^{(1)}\longrightarrow\cdots\longrightarrow\mathbf r^*,
+        \qquad \text{aiming to minimize }\mathcal J(\mathbf r).\]
+      </div>
+      <p>This sequence is an optimization strategy; the finite search does not establish a global minimizer
+        or a uniquely correct three-dimensional shape.</p>
+    </section>
+
+    <section class="poster-section" id="methods" aria-labelledby="methods-title">
+      <h2 id="methods-title">Neural-surrogate-guided reconstruction</h2>
+      <p>A state combines the current radius array, target lightcurve, modeled lightcurve, and observing geometry.
+        An action selects a cutting location \((\phi_a,\theta_a)\). The neural surrogate predicts how promising
+        that local modification is, and a physical lightcurve simulator evaluates proposed actions.</p>
+      <div class="equation" tabindex="0" role="region" aria-label="State and action definition">
+        \[s=(\mathbf r_{\rm arr},\mathbf L_{\rm target},\mathbf L_{\rm model},\Gamma),
+        \qquad a=(\phi_a,\theta_a).\]
+      </div>
+      <ol>
+        <li><strong>Generate synthetic lightcurves.</strong> Combine shape polyhedra and Sun&ndash;asteroid&ndash;observer
+          geometries in a forward simulator.</li>
+        <li><strong>Learn an improvement surrogate.</strong> Simulation-derived state&ndash;action labels teach the model
+          which local cuts are promising.</li>
+        <li><strong>Predict reward maps.</strong> A 2D CNN reads the radius grid, a 1D CNN compares lightcurves, and
+          geometry/action features identify the proposed cut. Evaluating candidate locations forms a reward map.</li>
+        <li><strong>Search, verify, and cut.</strong> Physically simulate proposed changes, apply a selected modification,
+          recompute the modeled curves, and repeat.</li>
+      </ol>
+      <figure class="result-figure " id="figure-2">
+        <a href="assets/reshaping-pipeline.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 2 at full resolution in a new tab">
+          <img src="assets/reshaping-pipeline.png" width="2080" height="1210" loading="lazy" alt="Poster pipeline from synthetic lightcurves through neural reward prediction, cutting actions and sequential reconstruction.">
+        </a>
+        <figcaption><strong>Figure 2.</strong> A neural surrogate predicts reward maps to guide searching and cutting. Repeating local reshaping produces a reconstructed shape and modeled lightcurves. Extracted directly from the poster PDF.</figcaption>
+      </figure>
+      <p>The surrogate provides fast action-conditioned scores; simulator verification determines the physical fit.
+        The implementation uses supervised improvement regression. Its state/action/reward terminology does not
+        imply that the surrogate is a reinforcement-learning policy.</p>
+      <details class="interpretation-note">
+        <summary>Evaluated setup and interpretation</summary>
+        <p>The verified mock branch uses randomly cut ellipsoidal targets, seven lightcurves with 100 rotation
+          samples each, and a sphere-initialized inversion. Shape information is stored on a 40 &times; 20 radius grid.</p>
+        <p>The current selector diversifies candidate cuts and evaluates a combination of lightcurve scores.
+          Its acceptance rule does not establish strict monotonic decrease of a single matched objective at every step.</p>
+      </details>
+    </section>
+
+    <section class="poster-section" id="performance" aria-labelledby="performance-title">
+      <h2 id="performance-title">Reconstruction performance</h2>
+      <h3>Error distributions</h3>
+      <p>Most synthetic samples reach low lightcurve errors. For the best recovered states, the median
+        sample-mean target-amplitude RMSE is <strong>0.0514</strong>, and the median worst-lightcurve error is
+        <strong>0.0632</strong>. A high-error tail remains for difficult or strongly degenerate cases.</p>
+      <figure class="result-figure " id="figure-3">
+        <a href="assets/reconstruction-errors.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 3 at full resolution in a new tab">
+          <img src="assets/reconstruction-errors.png" width="4831" height="1700" loading="lazy" alt="Histograms of sample-mean and worst-lightcurve errors with median lines at 0.0514 and 0.0632.">
+        </a>
+        <figcaption><strong>Figure 3.</strong> Best-recovered-state error distributions. Left: sample-mean target-amplitude RMSE; right: worst-lightcurve target-amplitude RMSE. Red lines show medians of 0.0514 and 0.0632.</figcaption>
+      </figure>
+      <h3>Representative lightcurve fits</h3>
+      <p>The examples span low, moderate, and high fitting errors. Agreement between target and reconstructed
+        brightness curves measures photometric success under the tested geometry; it does not establish geometric uniqueness.</p>
+      <figure class="result-figure " id="figure-4">
+        <a href="assets/reconstruction-examples.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 4 at full resolution in a new tab">
+          <img src="assets/reconstruction-examples.png" width="5406" height="1935" loading="lazy" alt="Low, moderate and high fitting-error examples comparing black target curves and red reconstructed curves.">
+        </a>
+        <figcaption><strong>Figure 4.</strong> Representative fits at low, moderate, and high error. Black curves are targets; red curves are reconstructions, shown for several lightcurves.</figcaption>
+      </figure>
+      <h3>Dependence on viewing geometry</h3>
+      <p>Reconstruction is most accurate for near-equator viewing. Error generally increases with observer-aspect
+        deviation from 90&deg; in the tested geometry bank. This connects inversion difficulty to which parts of the
+        shape the observations can constrain.</p>
+      <figure class="result-figure figure-narrow" id="figure-5">
+        <a href="assets/geometry-dependence.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 5 at full resolution in a new tab">
+          <img src="assets/geometry-dependence.png" width="2495" height="1803" loading="lazy" alt="Median lightcurve error rises with observer-aspect deviation from 90 degrees.">
+        </a>
+        <figcaption><strong>Figure 5.</strong> Median training-lightcurve target-amplitude RMSE versus observer-aspect deviation from 90&deg;. The tested cases show increasing error away from near-equator viewing.</figcaption>
+      </figure>
+      <div class="table-wrap">
+        <table class="research-table">
+          <caption>Illustrative NRMSE interpretation scale printed in the poster</caption>
+          <thead><tr><th scope="col">NRMSE range</th><th scope="col">Interpretation</th></tr></thead>
+          <tbody>
+            <tr><td>0.02&ndash;0.05</td><td>Excellent</td></tr>
+            <tr><td>0.05&ndash;0.10</td><td>Good</td></tr>
+            <tr><td>0.10&ndash;0.20</td><td>Moderate</td></tr>
+            <tr><td>0.20&ndash;0.40</td><td>Mismatch</td></tr>
+            <tr><td>&gt; 0.40</td><td>Poor</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="research-scope">These labels are reading aids rather than universal thresholds.
+        Figure 3 uses RMSE normalized by target peak-to-peak amplitude. The PCA-panel NRMSE is a separate metric;
+        neither is a direct error in the reconstructed shape.</p>
+    </section>
+
+    <section class="poster-section" id="degeneracy" aria-labelledby="degeneracy-title">
+      <h2 id="degeneracy-title">Photometric degeneracy</h2>
+      <h3>Equivalent and feasible shape families</h3>
+      <p>For fixed observing geometries, let \(\mathcal F:\mathcal R\to\mathcal L\) map the radius parameters to
+        modeled lightcurves. Shapes with identical photometry form an equivalent family; allowing a tolerance
+        \(\epsilon\) gives a larger photometrically feasible family:</p>
+      <div class="equation" tabindex="0" role="region" aria-label="Equivalent and feasible shape families">
+        \[\mathcal F:\mathbf r\mapsto\mathbf L(\mathbf r;\Gamma),\]
+        \[\mathcal M(\mathbf r_0)=\{\mathbf r:\mathcal F(\mathbf r)=\mathcal F(\mathbf r_0)\},\]
+        \[\mathcal S_\epsilon(\mathbf r_0)=\{\mathbf r:d_{\rm LC}(\mathcal F(\mathbf r),\mathcal F(\mathbf r_0))\leq\epsilon\}
+        \supseteq\mathcal M(\mathbf r_0).\]
+      </div>
+      <p>The scientific question becomes: which deformations leave the lightcurves nearly unchanged?
+        Infinitesimally, a direction satisfying \(J_{\mathcal F}(\mathbf r_0)\,\delta\mathbf r\approx0\)
+        is a first-order photometric null direction.</p>
+
+      <h3>Constructing an empirical family</h3>
+      <p>Different choices of local actions lead from the initial sphere to different photometrically feasible shapes.
+        Principal component analysis of these solutions extracts empirical deformation modes:</p>
+      <div class="equation" tabindex="0" role="region" aria-label="Empirical PCA deformation subspace">
+        \[V_{\rm PCA}=\operatorname{span}\{\mathbf p_1,\ldots,\mathbf p_k\}.\]
+      </div>
+      <figure class="result-figure " id="figure-6">
+        <a href="assets/feasible-shape-family.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 6 at full resolution in a new tab">
+          <img src="assets/feasible-shape-family.png" width="2060" height="600" loading="lazy" alt="Different cutting sequences branch from a sphere to several solutions whose variations are analyzed with PCA.">
+        </a>
+        <figcaption><strong>Figure 6.</strong> Different reshaping sequences generate a family of solutions. PCA extracts principal empirical deformation modes from that family. Extracted directly from the poster PDF.</figcaption>
+      </figure>
+      <p>The modes describe variation in the recovered solution family. They are neither an exact Jacobian
+        null-space basis nor a complete enumeration of all feasible shapes.</p>
+      <figure class="result-figure " id="figure-7">
+        <a href="assets/shape-degeneracy.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 7 at full resolution in a new tab">
+          <img src="assets/shape-degeneracy.png" width="4404" height="2268" loading="lazy" alt="A reference shape and plus or minus five percent perturbations along two PCA modes with corresponding lightcurves.">
+        </a>
+        <figcaption><strong>Figure 7.</strong> PCA-mode perturbations at &plusmn;5% and their lightcurves. Mode 1 shows larger photometric deviations than Mode 2. The panel NRMSE uses a separate convention from Figure 3's target-amplitude RMSE.</figcaption>
+      </figure>
+      <p>The poster's &plusmn;5% tests show that different modes have different photometric consequences:
+        Mode 1 causes larger lightcurve deviations, while Mode 2 causes smaller changes. Substantial shape variation
+        can therefore remain weakly constrained after fitting the available lightcurves.</p>
+
+      <h3>Higher-order sensitivity</h3>
+      <p>A first-order null direction only describes infinitesimal behavior. For a finite perturbation
+        \(c\mathbf p\), second-order and higher terms can change the lightcurves:</p>
+      <div class="equation" tabindex="0" role="region" aria-label="Finite-amplitude expansion of the forward model">
+        \[\mathcal F(\mathbf r_0+c\mathbf p)\approx\mathcal F(\mathbf r_0)
+        +cJ_{\mathcal F}(\mathbf r_0)\mathbf p
+        +\frac{c^2}{2}D^2\mathcal F(\mathbf r_0)[\mathbf p,\mathbf p].\]
+      </div>
+      <p>The feasible family cannot generally be replaced by the affine subspace
+        \(\mathbf r_0+V_{\rm PCA}\). Even so, the finite-amplitude comparison finds that corrected PCA modes remain
+        photometrically flatter than first-order-matched random directions at the same perturbation amplitude.</p>
+      <figure class="result-figure figure-narrow" id="figure-8">
+        <a href="assets/higher-order-sensitivity.png" target="_blank" rel="noopener noreferrer" aria-label="Open Figure 8 at full resolution in a new tab">
+          <img src="assets/higher-order-sensitivity.png" width="2400" height="2400" loading="lazy" alt="Normalized lightcurve change versus perturbation amplitude for corrected PCA modes and matched random directions.">
+        </a>
+        <figcaption><strong>Figure 8.</strong> Corrected PCA modes produce smaller normalized lightcurve changes than first-order-matched random perturbations at equal finite amplitudes. The random-direction band shows the 5th&ndash;95th percentiles.</figcaption>
+      </figure>
+      <p>This supports finite-amplitude persistence of empirical weak modes under the tested setup; it does not
+        reconstruct the entire nonlinear feasible family.</p>
+    </section>
+
+    <section class="poster-section" id="conclusions" aria-labelledby="conclusions-title">
+      <h2 id="conclusions-title">Conclusions &amp; next steps</h2>
+      <p>Sequential reshaping turns lightcurve inversion into a way to probe which shape degrees of freedom
+        are actually constrained by photometry.</p>
+      <ol>
+        <li><strong>Efficient inversion:</strong> neural surrogate guidance enables sequential asteroid-shape reconstruction.</li>
+        <li><strong>From one solution to a family:</strong> different reshaping trajectories expose multiple photometrically feasible shapes.</li>
+        <li><strong>Information content:</strong> PCA reveals empirical weak deformation modes that remain unusually insensitive beyond the infinitesimal regime.</li>
+      </ol>
+      <h3>Caveats and future work</h3>
+      <p>The results are primarily based on synthetic data, and degeneracy depends on observing geometry and
+        model assumptions. Next steps are validation with real asteroid lightcurves, broader observing geometries,
+        and quantifying how additional observations reduce the feasible deformation space.</p>
+    </section>
+
+    <section class="poster-section" id="references" aria-labelledby="references-title">
+      <h2 id="references-title">Poster references</h2>
+      <ol class="research-references">
+        <li id="ref-1">Kaasalainen, M. &amp; Torppa, J. (2001). Icarus, 153, 24&ndash;36.</li>
+        <li id="ref-2">Kaasalainen, M., Torppa, J. &amp; Muinonen, K. (2001). Icarus, 153, 37&ndash;51.</li>
+        <li id="ref-3">Nikolenko, S. I. (2019). <a href="https://arxiv.org/abs/1909.11512">arXiv:1909.11512</a>.</li>
+        <li id="ref-4">Dulac-Arnold, G., Evans, R., Sunehag, P. &amp; Coppin, B. (2015). <a href="https://arxiv.org/abs/1512.07679">arXiv:1512.07679</a>.</li>
+        <li id="ref-5">Silver, D., Schrittwieser, J., Simonyan, K. et al. (2017). Nature, 550, 354&ndash;359.</li>
+      </ol>
+    </section>
+
+  </main>
+
+  <footer class="research-footer">
+    <a class="text-link" href="../../#research">Back to research</a>
+    <a class="text-link" href="../pta/">PTA &amp; VLBI &rarr;</a>
+  </footer>
+  </div>
+</body>
+</html>
