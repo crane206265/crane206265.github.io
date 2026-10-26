@@ -1,0 +1,4 @@
+apps-script-dist/
+private-data/
+*.local.json
+.qa/

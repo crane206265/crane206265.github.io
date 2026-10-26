@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#272d30">
+  <title>Planner | Hakjin Lee</title>
+  <link rel="stylesheet" href="../main_style.css">
+  <link rel="stylesheet" href="planner.css">
+  <script src="config.js" defer></script>
+  <script src="core.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="planner-page">
+  <a class="skip-link" href="#planner-content">본문으로 이동</a>
+  <header class="site-header">
+    <a class="site-title" href="../">Hakjin Lee</a>
+    <span class="site-subtitle">Planner</span>
+  </header>
+  <nav class="sidebar" aria-label="Primary navigation">
+    <p class="sidebar-label">Explore</p>
+    <ul>
+      <li><a href="../#about">About</a></li>
+      <li class="research-group">
+        <a href="../#research">Research</a>
+        <ul class="sidebar-subnav" aria-label="Research projects">
+          <li><a href="../research/pta/">PTA &amp; VLBI</a></li>
+          <li><a href="../research/asteroid/">Asteroid Inversion</a></li>
+          <li><a href="../research/black-hole/">GRRT</a></li>
+        </ul>
+      </li>
+      <li><a href="../#outputs">Outputs</a></li>
+      <li><a href="../#cv">CV</a></li>
+      <li class="sidebar-personal"><a href="../missing-star/">Missing Star</a></li>
+      <li><a href="../blog/blog.html">Blog</a></li>
+      <li><a href="#planner-content" aria-current="page">Planner</a></li>
+    </ul>
+  </nav>
+
+  <div class="content-background">
+  <div class="planner-container" id="planner-content" tabindex="-1">
+  <section id="login-view" class="login-view" aria-labelledby="login-title">
+    <div class="login-card">
+      <div class="notebook-icon" aria-hidden="true"><span></span><span></span><span></span></div>
+      <h1 id="login-title">플래너</h1>
+      <p class="login-copy">비밀번호를 입력하면 기록을 열 수 있습니다.</p>
+      <form id="login-form">
+        <label for="password">비밀번호</label>
+        <input id="password" type="password" autocomplete="current-password" required maxlength="256" placeholder="비밀번호를 입력하세요">
+        <button class="button primary wide" id="login-button" type="submit">로그인</button>
+      </form>
+      <p id="login-message" class="login-message" role="status"></p>
+      <p id="preview-info" class="preview-info" hidden>예시 기록으로 미리 볼 수 있습니다. 새로고침하거나 탭을 닫으면 입력한 내용이 사라집니다.</p>
+    </div>
+  </section>
+
+  <div id="planner-view" class="planner-layout" hidden>
+    <aside class="side-panel" aria-label="플래너 도구">
+      <nav class="view-nav" aria-label="보기 선택">
+        <button id="show-month" class="nav-button active" type="button"><span aria-hidden="true">▦</span> 월간 캘린더</button>
+        <button id="show-day" class="nav-button" type="button"><span aria-hidden="true">☰</span> 오늘</button>
+      </nav>
+      <details class="mini-calendar" id="mini-calendar-panel">
+        <summary>날짜 선택</summary>
+        <div class="mini-calendar-body">
+        <div class="mini-heading"><button class="icon-button month-prev" type="button" aria-label="이전 달">‹</button><strong class="month-label"></strong><button class="icon-button month-next" type="button" aria-label="다음 달">›</button></div>
+        <div class="weekday-head" aria-hidden="true"><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span><span>일</span></div>
+        <div id="mini-grid" class="mini-grid" aria-label="날짜 선택"></div>
+        </div>
+      </details>
+      <div class="side-tools">
+        <button id="import-note" class="text-button" type="button">↥ Markdown 가져오기</button>
+        <button id="export-all" class="text-button" type="button">↧ 전체 기록 내보내기</button>
+        <input id="import-file" type="file" accept=".md,text/markdown,text/plain" hidden>
+      </div>
+      <div class="side-footer"><span class="privacy-dot" aria-hidden="true"></span><span id="connection-label">비공개 기록</span><button id="logout" type="button" class="text-button">잠그기</button></div>
+    </aside>
+
+    <main class="workspace" id="workspace" tabindex="-1">
+      <div class="workspace-top"><p class="eyebrow" id="workspace-kicker">플래너</p><div class="sync-controls"><span id="save-state" role="status">불러오는 중</span><button id="refresh" class="icon-button" type="button" aria-label="기록 새로고침">↻</button></div></div>
+      <div id="preview-banner" class="preview-banner" hidden>미리보기입니다. 입력한 내용은 서버에 저장되지 않습니다.</div>
+      <div id="error-banner" class="error-banner" role="alert" hidden></div>
+      <section id="conflict-panel" class="conflict-panel" hidden aria-label="다른 기기의 변경 사항">
+        <strong>다른 기기에서 수정한 기록이 있습니다.</strong>
+        <p>지금 수정한 내용을 파일로 저장한 뒤, 최신 기록을 불러와 비교해 주세요.</p>
+        <button id="download-conflict" class="button" type="button">수정한 내용 내려받기</button>
+        <button id="load-conflict" class="button" type="button">최신 기록 불러오기</button>
+      </section>
+
+      <section id="month-view" aria-labelledby="month-title">
+        <header class="page-heading"><div><h1 id="month-title"></h1></div><div class="heading-actions"><button class="button today-button" type="button">이번 달</button><button class="icon-button month-prev" type="button" aria-label="이전 달">‹</button><button class="icon-button month-next" type="button" aria-label="다음 달">›</button></div></header>
+        <p class="calendar-intro">날짜를 누르면 해당 날짜의 기록을 열 수 있습니다.</p>
+        <div class="month-card"><div class="weekday-head full" aria-hidden="true"><span>월요일</span><span>화요일</span><span>수요일</span><span>목요일</span><span>금요일</span><span>토요일</span><span>일요일</span></div><div id="month-grid" class="month-grid" aria-label="월간 캘린더"></div></div>
+        <div class="calendar-legend"><span><i class="today-marker"></i>오늘</span><span><i class="record-marker"></i>기록이 있는 날</span><span id="month-count"></span></div>
+      </section>
+
+      <section id="day-view" hidden aria-labelledby="day-title">
+        <header class="page-heading"><div><p class="section-overline" id="day-subtitle"></p><h1 id="day-title"></h1></div><div class="heading-actions"><button class="button today-button" type="button">오늘</button><button id="export-day" class="button" type="button">↓ .md</button><button id="save-button" class="button primary" type="button">저장</button></div></header>
+        <div class="week-strip" id="week-strip" aria-label="이번 주 날짜"></div>
+        <div class="day-stats"><div><span class="stat-label">일정</span><strong id="stat-events">0<span>개</span></strong></div><div><span class="stat-label">예정 시간</span><strong id="stat-hours">0<span>시간</span></strong></div><div><span class="stat-label">완료</span><strong id="stat-completed">0<span>개</span></strong></div><div class="progress-stat"><span class="stat-label">완료율</span><div class="progress-track"><span id="progress-fill"></span></div><small id="progress-label">등록된 일정 없음</small></div></div>
+        <div class="day-columns">
+          <div class="schedule-column">
+            <section class="paper-card timeline-card" aria-labelledby="timeline-title"><div class="card-heading"><h2 id="timeline-title">일정</h2><button id="add-event" class="button small" type="button">+ 일정 추가</button></div><div id="timeline"></div></section>
+            <section class="paper-card timechart-card" aria-labelledby="timechart-title">
+              <div class="card-heading"><h2 id="timechart-title">타임라인</h2><span id="timechart-range" class="timechart-range"></span></div>
+              <p class="timechart-help" id="timechart-help">일정을 누르면 수정할 수 있습니다.</p>
+              <div id="timechart" class="timechart" aria-label="시간별 일정" aria-describedby="timechart-help"></div>
+            </section>
+          </div>
+          <div class="right-column"><section class="paper-card todo-card" aria-labelledby="todo-title"><div class="card-heading"><h2 id="todo-title">할 일</h2><span id="todo-count" class="count-pill">0/0</span></div><div id="todo-list"></div><form id="todo-form" class="todo-form"><label class="sr-only" for="todo-input">새 할 일</label><input id="todo-input" maxlength="500" placeholder="할 일 추가" required><button class="icon-button" type="submit" aria-label="할 일 추가">+</button></form></section>
+          <section class="paper-card note-card"><h2>메모</h2><p>추가 메모는 원문에서 작성할 수 있습니다. <span class="wiki-example">[[노트 링크]]</span>도 함께 저장됩니다.</p><button id="open-markdown" class="text-link" type="button">원문 편집</button></section></div>
+        </div>
+      </section>
+      <footer class="workspace-footer"><span>한국 시간 기준</span></footer>
+    </main>
+  </div>
+  </div>
+  </div>
+
+  <dialog id="event-dialog" class="editor-dialog" aria-labelledby="event-dialog-title"><form id="event-form"><div class="dialog-heading"><h2 id="event-dialog-title">일정 추가</h2><button class="icon-button close-dialog" type="button" aria-label="닫기">×</button></div><div class="time-fields"><label>시작<input id="event-start" type="time" required></label><label>종료<input id="event-end" type="time" required></label></div><label>제목<input id="event-title" maxlength="500" required placeholder="일정 제목"></label><label>메모<textarea id="event-notes" rows="4" maxlength="10000" placeholder="메모 또는 [[노트 링크]]"></textarea></label><div class="dialog-actions"><button id="delete-event" class="text-button danger" type="button">일정 삭제</button><button class="button primary" type="submit">적용</button></div></form></dialog>
+  <dialog id="markdown-dialog" class="editor-dialog markdown-dialog" aria-labelledby="markdown-title"><div class="dialog-heading"><h2 id="markdown-title">기록 원문</h2><button class="icon-button close-dialog" type="button" aria-label="닫기">×</button></div><p class="help-text">일정과 할 일을 포함한 전체 기록을 Markdown으로 편집합니다.</p><label class="sr-only" for="markdown-input">기록 원문</label><textarea id="markdown-input" spellcheck="false" rows="18"></textarea><div class="dialog-actions"><button class="button close-dialog" type="button">취소</button><button id="apply-markdown" class="button primary" type="button">적용</button></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
